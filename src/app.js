@@ -5,6 +5,10 @@ const manager = new ProductManager();
 
 const app = express();
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+
 app.get("/products", async (req, res) => {
     const { limit } = req.query;
     const products = await manager.getProducts();
