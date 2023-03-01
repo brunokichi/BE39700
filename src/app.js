@@ -1,31 +1,14 @@
 import express from "express"
-import ProductManager from "./ProductManager.js"
-
-const manager = new ProductManager();
+import productsRouter from "./routes/products.router.js";
+import cartsRouter from "./routes/carts.router.js";
+import __dirname from "./utils.js"
 
 const app = express();
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.static(__dirname + "/../public"));
 
-
-app.get("/products", async (req, res) => {
-    const { limit } = req.query;
-    const products = await manager.getProducts();
-
-    if (limit) {
-        const limitProducts = products.slice(0, limit);
-        res.json(limitProducts);
-    } else {
-        res.json(products);
-    }
-    
-})
-
-app.get("/products/:pid", async (req, res) => {
-    const product = await manager.getProductsById(+req.params.pid);
-    res.send(product);
-})
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartsRouter);
 
 app.listen(8080, () => {
     console.log("Servidor escuchando en el puerto 8080");
