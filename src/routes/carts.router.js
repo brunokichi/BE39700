@@ -8,9 +8,14 @@ import CartManager from "../CartManager.js"
 
 const manager = new CartManager();
 
+cartsRouter.get("/", async (req, res) => {
+    const carts = await manager.getCarts();
+    res.json(carts);
+})
+
 cartsRouter.get("/:cid", async (req, res) => {
     const cart = await manager.getCartById(+req.params.cid);
-    res.send(cart);
+    res.json(cart);
 })
 
 cartsRouter.post("/", async (req, res) => {

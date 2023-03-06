@@ -28,6 +28,10 @@ class ProductManager {
   ) {
     if (!title || !description || !code || !price || !stock || !category) {
       return "Error! Algún campo está incompleto";
+    } else if ( typeof price != 'number') {
+      return "Error! El valor del campo precio no es válido";
+    } else if ( typeof stock != 'number') {
+      return "Error! El valor del campo stock no es válido";
     } else {
       const products = await this.getProducts();
 

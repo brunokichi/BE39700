@@ -8,7 +8,6 @@ import ProductManager from "../ProductManager.js"
 
 const manager = new ProductManager();
 
-
 productsRouter.get("/", async (req, res) => {
     const { limit } = req.query;
     const products = await manager.getProducts();
@@ -30,17 +29,22 @@ productsRouter.get("/:pid", async (req, res) => {
 productsRouter.post("/", async (req, res) => {
     const { title, description, code, price, status, stock, category, thumbnail } = req.body;
     const newProduct = await manager.addProduct(title, description, code, price, status, stock, category, thumbnail);
+
+    const products = await manager.getProducts();
+    req.socketServer.emit("products", products);
+    
     res.send(newProduct);
 })
 
-productsRouter.put("/", async (req, res) => {
-    const { id, title, description, code, price, status, stock, category, thumbnail } = req.body;
+productsRouter.put("/:pid", async (req, res) => {
+    const id = +req.params.pid;
+    const { title, description, code, price, status, stock, category, thumbnail } = req.body;
     const updProduct = await manager.updateProduct(id, title, description, code, price, status, stock, category, thumbnail);
     res.json(updProduct);
 })
 
-productsRouter.delete("/", async (req, res) => {
-    const { id } = req.body;
+productsRouter.delete("/:pid", async (req, res) => {
+    const id = +req.params.pid;
     const delProduct = await manager.deleteProduct(id);
     res.json(delProduct);
 })
