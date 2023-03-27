@@ -1,22 +1,30 @@
 import express from "express";
-
-import ProductManager from "../ProductManager.js"
+import { ProductManager } from "../dao/index.js"
 
 const router = express.Router();
 
 const manager = new ProductManager();
 
 router.get("/", async (req, res) => {
-    const products = await manager.getProducts();
-
-    res.render("home", {
-        products,
-    });
+    try {
+        const products = await manager.getProducts();
+        res.render("home", {
+            products,
+        });
+    } catch (e) {
+        return e;
+    }
 });
 
 router.get("/realtimeproducts", async (req, res) => {
 
     res.render("realtimeproducts");
+
+});
+
+router.get("/chat", async (req, res) => {
+
+    res.render("chat");
 
 });
 

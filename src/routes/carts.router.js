@@ -4,29 +4,44 @@ const cartsRouter = Router();
 cartsRouter.use(json());
 cartsRouter.use(urlencoded({ extended: true }));
 
-import CartManager from "../CartManager.js"
+import { CartManager } from "../dao/index.js";
 
 const manager = new CartManager();
 
 cartsRouter.get("/", async (req, res) => {
-    const carts = await manager.getCarts();
-    res.json(carts);
+    try {
+        const carts = await manager.getCarts();
+        res.json(carts);
+    } catch (e) {
+        return e;
+      }
 })
 
 cartsRouter.get("/:cid", async (req, res) => {
-    const cart = await manager.getCartById(+req.params.cid);
-    res.json(cart);
+    try {
+        const cart = await manager.getCartById(req.params.cid);
+        res.json(cart);
+    } catch (e) {
+        return e;
+    }
 })
 
 cartsRouter.post("/", async (req, res) => {
-    const { products } = req.body;
-    const newCart = await manager.addCart( products );
-    res.send(newCart);
+    try {
+        const newCart = await manager.addCart();
+        res.send(newCart);
+    } catch (e) {
+        return e;
+    }
 })
 
 cartsRouter.post("/:cid/product/:pid", async (req, res) => {
-    const product = await manager.addProductToCart(+req.params.cid, +req.params.pid);
-    res.send(product);
+    try {
+        const product = await manager.addProductToCart(req.params.cid, req.params.pid);
+        res.send(product);
+    } catch (e) {
+        return e;
+    }
 })
 
 export default cartsRouter;

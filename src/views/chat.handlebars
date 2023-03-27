@@ -1,0 +1,17 @@
+<div>
+  <h1>Plataforma de Chat</h1>
+  <div>
+    <label for="chat-input">Ingrese su usuario</label>
+      <input type="text" id="chat-user" name="chat-user" />
+    <label for="chat-input">Ingrese el mensaje</label>
+      <input type="text" id="chat-message" name="chat-message" />
+    <button type="button" id="chat-send"> Enviar </button>
+    <p id="chat-state"></p>
+  </div>
+  <div>
+    <h2>Lista de mensajes</h2>
+    <ul id="chats-list"></ul>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js"></script>

@@ -4,49 +4,73 @@ const productsRouter = Router();
 productsRouter.use(json());
 productsRouter.use(urlencoded({ extended: true }));
 
-import ProductManager from "../ProductManager.js"
+import { ProductManager } from "../dao/index.js";
 
 const manager = new ProductManager();
 
 productsRouter.get("/", async (req, res) => {
     const { limit } = req.query;
-    const products = await manager.getProducts();
+    try {
+        const products = await manager.getProducts();
 
-    if (limit) {
-        const limitProducts = products.slice(0, limit);
-        res.json(limitProducts);
-    } else {
-        res.json(products);
+        if (limit) {
+            const limitProducts = products.slice(0, limit);
+            res.json(limitProducts);
+        } else {
+            res.json(products);
+        }
+    } catch (e) {
+        return "Se produjo un error al obtener los productos";
     }
     
 })
 
 productsRouter.get("/:pid", async (req, res) => {
-    const product = await manager.getProductsById(+req.params.pid);
-    res.send(product);
+    try {
+        const product = await manager.getProductsById(req.params.pid);
+        res.send(product);
+    } catch (e) {
+        return "Se produjo un error al obtener el producto";
+    }
 })
 
 productsRouter.post("/", async (req, res) => {
     const { title, description, code, price, status, stock, category, thumbnail } = req.body;
-    const newProduct = await manager.addProduct(title, description, code, price, status, stock, category, thumbnail);
-
-    const products = await manager.getProducts();
-    req.socketServer.emit("products", products);
-    
-    res.send(newProduct);
+    try {
+        const newProduct = await manager.addProduct(title, description, code, price, status, stock, category, thumbnail);
+        try {
+            const products = await manager.getProducts();
+            req.socketServer.emit("products", products);
+            res.send(newProduct);
+        } catch (e) {
+            return "Se produjo un error al obtener los productos";
+        }
+    } catch (e) {
+        return "Se produjo un error al agregar el producto";
+    }
 })
 
 productsRouter.put("/:pid", async (req, res) => {
-    const id = +req.params.pid;
-    const { title, description, code, price, status, stock, category, thumbnail } = req.body;
-    const updProduct = await manager.updateProduct(id, title, description, code, price, status, stock, category, thumbnail);
-    res.json(updProduct);
+    const id = req.params.pid;
+    const updateProductData = req.body;
+    
+    try {
+        const updProduct = await manager.updateProduct(id, updateProductData);
+        res.json(updProduct);
+    } catch (e) {
+        return "Se produjo un error al actualizar el producto";
+    }
+    
 })
 
 productsRouter.delete("/:pid", async (req, res) => {
-    const id = +req.params.pid;
-    const delProduct = await manager.deleteProduct(id);
-    res.json(delProduct);
+    const id = req.params.pid;
+    try {
+        const delProduct = await manager.deleteProduct(id);
+        res.json(delProduct);
+    } catch (e) {
+        return "Se produjo un error al eliminar el producto";
+    }
 })
 
 
