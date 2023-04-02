@@ -5,7 +5,7 @@ import DbCartManager from "./db-managers/CartManager.js";
 import DbChatManager from "./db-managers/ChatManager.js";
 
 const config = {
-  persistenceType: "file",
+  persistenceType: "db",
 };
 
 let ProductManager, CartManager, ChatManager;

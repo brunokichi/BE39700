@@ -9,18 +9,22 @@ import { ProductManager } from "../dao/index.js";
 const manager = new ProductManager();
 
 productsRouter.get("/", async (req, res) => {
-    const { limit } = req.query;
+    const { limit, page, sort, title, stock } = req.query;
     try {
-        const products = await manager.getProducts();
+        const products = await manager.getProducts(limit, page, sort, title, stock);
 
-        if (limit) {
+        /*if (limit) {
             const limitProducts = products.slice(0, limit);
             res.json(limitProducts);
         } else {
             res.json(products);
-        }
+        }*/
+        //res.json(products);
+        res.status(201).send({ status: "success", payload: products });
     } catch (e) {
-        return "Se produjo un error al obtener los productos";
+        return res
+            .status(400)
+            .send({ status: "error", payload: "Se produjo un error al obtener los productos" });
     }
     
 })
@@ -40,7 +44,7 @@ productsRouter.post("/", async (req, res) => {
         const newProduct = await manager.addProduct(title, description, code, price, status, stock, category, thumbnail);
         try {
             const products = await manager.getProducts();
-            req.socketServer.emit("products", products);
+            req.socketServer.emit("products", products.docs);
             res.send(newProduct);
         } catch (e) {
             return "Se produjo un error al obtener los productos";

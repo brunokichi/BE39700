@@ -2,13 +2,41 @@ import productModel from "../models/ProductModel.js";
 
 export default class ProductManager {
 
-  getProducts = async () => {
+  getProducts = async (limit, page, sort, title, stock) => {
+    let order = '';
+    if (sort) {
+      order = {price: `${sort}`};
+    }
+
+    let query = {};
+    if (title) {
+      query.title = title;
+    }
+    if (stock) {
+      query.stock = +stock;
+    }
+    
     try {
+      console.log(order);
+      const products = await productModel.paginate(
+        query,
+        {
+          limit: limit ?? 5,
+          lean: true,
+          page: page ?? 1,
+          sort: order,
+        })
+      return products;
+      } catch (e) {
+        return e.message;
+      }
+
+    /*try {
       const products = await productModel.find().lean();
       return products;
     } catch (e) {
       return e.message;
-    }
+    }*/
   };
   
   getProductsById = async (productId) => {

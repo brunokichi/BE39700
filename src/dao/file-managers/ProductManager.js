@@ -8,7 +8,7 @@ class ProductManager {
     this.#path = __dirname + "/dao/file-managers/files/products.json";
   }
 
-  async getProducts() {
+  async getProducts(limit, page) {
     try {
       const products = await fs.promises.readFile(this.#path, "utf-8");
       return JSON.parse(products);
