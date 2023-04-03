@@ -17,11 +17,10 @@ export default class ProductManager {
     }
     
     try {
-      //console.log(order);
       const products = await productModel.paginate(
         query,
         {
-          limit: limit ?? 3,
+          limit: limit ?? 10,
           lean: true,
           page: page ?? 1,
           sort: order,
@@ -30,13 +29,6 @@ export default class ProductManager {
       } catch (e) {
         return e.message;
       }
-
-    /*try {
-      const products = await productModel.find().lean();
-      return products;
-    } catch (e) {
-      return e.message;
-    }*/
   };
   
   getProductsById = async (productId) => {
