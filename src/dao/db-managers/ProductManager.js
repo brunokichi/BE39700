@@ -17,11 +17,11 @@ export default class ProductManager {
     }
     
     try {
-      console.log(order);
+      //console.log(order);
       const products = await productModel.paginate(
         query,
         {
-          limit: limit ?? 5,
+          limit: limit ?? 3,
           lean: true,
           page: page ?? 1,
           sort: order,

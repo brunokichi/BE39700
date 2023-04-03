@@ -13,13 +13,6 @@ productsRouter.get("/", async (req, res) => {
     try {
         const products = await manager.getProducts(limit, page, sort, title, stock);
 
-        /*if (limit) {
-            const limitProducts = products.slice(0, limit);
-            res.json(limitProducts);
-        } else {
-            res.json(products);
-        }*/
-        //res.json(products);
         res.status(201).send({ status: "success", payload: products });
     } catch (e) {
         return res

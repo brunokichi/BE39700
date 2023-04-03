@@ -19,6 +19,7 @@ export default class CartManager {
     try {
       const cart = await cartModel
       .findById(idCart)
+      .lean()
       .populate("products.product");
       return cart;
     } catch (e) {
@@ -37,16 +38,15 @@ export default class CartManager {
 
   addProductToCart = async (cid, pid) => {
     try {
-      const cart = await cartModel.findById(cid);
+      const cart = await cartModel.findById(cid).populate("products.product");
 
       try {
         await productModel.findById(pid);
 
-        const product = cart.products.filter((el) => el.product === pid);
+        const product = cart.products.filter((el) => el.product.id == pid);
         if (product.length > 0) {
-          const productIndex = cart.products.findIndex((el) => el.product === pid);
-          const quantity = product[0].quantity + 1;
-          cart.products[productIndex] = {...cart.products[productIndex],quantity};
+          const productIndex = cart.products.findIndex((el) => el.product.id == pid);
+          cart.products[productIndex].quantity++;
           return cart.save();
         } else {
           cart.products.push({ product: pid, quantity: 1 });
@@ -65,7 +65,7 @@ export default class CartManager {
       const result = await cartModel.updateOne({ _id: cid} ,  products);
       return "Carrito actualizado";
     } catch (e) {
-      return "Carrito no encontrado";
+      return "ID de carrito o productos inexistentes";
     }
   };
 
@@ -73,12 +73,13 @@ export default class CartManager {
     try {
       const cart = await cartModel.findById(cid);
 
-      const product = cart.products.filter((el) => el.product === pid);
+      const product = cart.products.filter((el) => el.product._id == pid);
 
       if (product.length > 0) {
-        const productIndex = cart.products.findIndex((el) => el.product === pid);
-        cart.products[productIndex] = {...cart.products[productIndex],quantity};
+        const productIndex = cart.products.findIndex((el) => el.product._id == pid);
+        cart.products[productIndex].quantity = quantity;
         return cart.save();
+
       } else {
         return "Producto no encontrado en el carrito";
       }
@@ -90,9 +91,9 @@ export default class CartManager {
   deleteProductFromCart = async (cid, pid) => {
     try {
       const cart = await cartModel.findById(cid);
-      const product = cart.products.filter((el) => el.product === pid);
+      const product = cart.products.filter((el) => el.product._id == pid);
       if (product.length > 0) {
-        const productIndex = cart.products.findIndex((el) => el.product === pid);
+        const productIndex = cart.products.findIndex((el) => el.product._id == pid);
         cart.products.splice(productIndex, 1);
         cart.save();
         return `Producto ID ${pid} eliminado del carrito`;

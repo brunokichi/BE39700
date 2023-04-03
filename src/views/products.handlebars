@@ -1,0 +1,28 @@
+<div>
+  <h1>Lista de productos</h1>
+  <h3>El agregado al carrito apunta momentaneamente al ID 641f5685236f0ed708eb3b91</h3>
+  {{#each products.docs}}
+    <p>
+      <form action="/api/carts/641f5685236f0ed708eb3b91/product/{{id}}" method="post">
+        ID: {{id}} / Título: {{title}} <br />
+        Descripción: {{description}} / Precio: {{price}} <br />
+        Miniaturas: {{thumbnail}} / Código: {{code}} <br />
+        Stock: {{stock}} / Categoria: {{category}} <br />
+        Estado: {{status}} <br />
+        <input type="submit" value="Agregar al carrito" />
+      </form>
+    </p>
+  {{/each}}
+
+  <div>
+    {{#if products.hasPrevPage}}
+      <a href="/products?page={{products.prevPage}}"><button>Anterior</button></a>
+    {{/if}}
+
+    <span>Página {{products.page}} de {{products.totalPages}}</span>
+
+    {{#if products.hasNextPage}}
+      <a href="/products?page={{products.nextPage}}"><button>Siguiente</button></a>
+    {{/if}}
+  </div>
+</div>
