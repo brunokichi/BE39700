@@ -1,7 +1,19 @@
 <div>
+  <div>
+    Bienvenido {{ user }} - 
+    {{#if rol}}
+    Administrador
+    {{else}}
+    Usuario
+    {{/if}}
+    <a href="/profile"><button type="button" id="profile" style="margin-left:1%"> Mi perfil </button></a>
+    <a href="/logout"><button type="button" id="logout" style="margin-left:1%"> Cerrar sesión </button></a>
+  </div>
   <h1>Lista de productos</h1>
   <h3>El agregado al carrito apunta al ID 641f5685236f0ed708eb3b91</h3>
+  
   {{#each products.docs}}
+
     <p>
       <form action="/api/carts/641f5685236f0ed708eb3b91/product/{{id}}" method="post">
         ID: {{id}} / Título: {{title}} <br />

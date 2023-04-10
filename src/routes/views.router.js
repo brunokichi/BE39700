@@ -1,20 +1,90 @@
 import express from "express";
-import { ProductManager, CartManager } from "../dao/index.js"
+import { ProductManager, CartManager, SessionManager } from "../dao/index.js"
 
 const router = express.Router();
 
 const managerCarts = new CartManager();
 const managerProducts = new ProductManager();
+const managerSessions = new SessionManager();
 
 router.get("/", async (req, res) => {
-    try {
+    /*try {
         const products = await managerProducts.getProducts();
         res.render("home", {
             products,
         });
     } catch (e) {
         return e;
+    }*/
+    res.redirect("/login");
+});
+
+router.get("/login", async (req, res) => {
+    const user = req.session.user;
+    if (!user) { 
+        const { result } = req.query;
+        let mensajeResultado = "";
+        switch (result) {
+            case '1':
+                mensajeResultado = "Error! Algún campo está incompleto";
+                break;
+            case '2':
+                mensajeResultado = "Error! Usuario y/o contraseña incorrecto";
+                break;
+            case '3':
+                mensajeResultado = "Error! No se pudo validar el usuario";
+                break;
+            case '96':
+                mensajeResultado = "Error! No se pudo validar el email"
+                break;
+            case '97':
+                mensajeResultado = "Error! El email ya se encuentra registrado";
+                break;
+            case '98':
+                mensajeResultado = "Error! No se pudo registrar al usuario";
+                break;
+            case '99':
+                mensajeResultado = "Usuario generado de manera exitosa, intente loguearse por favor";
+                break;
+            default:
+                break;
+        }
+        res.render("login", { mensajeResultado });
+    } else {
+        res.redirect("/products");
     }
+});
+
+router.get("/register", async (req, res) => {
+    const user = req.session.user;
+    if (!user) { 
+        res.render("register");
+    } else {
+        res.redirect("/products");
+    }
+});
+
+router.get("/profile", async (req, res) => {
+    const user = req.session.user;
+    if (user) {
+        try {
+            const { first_name, last_name, email, age } = await managerSessions.profileUser(user);
+            res.render("profile", { first_name, last_name, email, age } );
+        } catch (e) {
+            return e;
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+router.get("/logout", async (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send({ status: "error", data: err});
+        }
+        res.redirect("/");
+    })
 });
 
 router.get("/realtimeproducts", async (req, res) => {
@@ -30,14 +100,19 @@ router.get("/chat", async (req, res) => {
 });
 
 router.get("/products", async (req, res) => {
-    const { limit, page, sort, title, stock } = req.query;
-    try {
-        const products = await managerProducts.getProducts(limit, page, sort, title, stock);
-        res.render("products", {
-            products, 
-        });
-    } catch (e) {
-        return e;
+    const {user, rol} = req.session;
+    if (user) {
+        const { limit, page, sort, title, stock } = req.query;
+        try {
+            const products = await managerProducts.getProducts(limit, page, sort, title, stock);
+            res.render("products", {
+                products, user, rol
+            });
+        } catch (e) {
+            return e;
+        }
+    } else {
+        res.redirect("/");
     }
 });
 
