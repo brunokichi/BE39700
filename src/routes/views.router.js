@@ -20,8 +20,8 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/login", async (req, res) => {
-    const user = req.session.user;
-    if (!user) { 
+    const session = req.session.passport;
+    if (!session) { 
         const { result } = req.query;
         let mensajeResultado = "";
         switch (result) {
@@ -65,11 +65,13 @@ router.get("/register", async (req, res) => {
 });
 
 router.get("/profile", async (req, res) => {
-    const user = req.session.user;
-    if (user) {
+    /*const user = req.session.user;
+    if (user) {*/
+    if (req.session.passport) {
         try {
-            const { first_name, last_name, email, age } = await managerSessions.profileUser(user);
-            res.render("profile", { first_name, last_name, email, age } );
+            //const { first_name, last_name, email, age, rol } = await managerSessions.profileUser(user);
+            const { first_name, last_name, email, age, rol } = await managerSessions.profileUser(req.session.passport.user);
+            res.render("profile", { first_name, last_name, email, age, rol } );
         } catch (e) {
             return e;
         }
@@ -87,26 +89,14 @@ router.get("/logout", async (req, res) => {
     })
 });
 
-router.get("/realtimeproducts", async (req, res) => {
-
-    res.render("realtimeproducts");
-
-});
-
-router.get("/chat", async (req, res) => {
-
-    res.render("chat");
-
-});
-
-router.get("/products", async (req, res) => {
-    const {user, rol} = req.session;
-    if (user) {
+router.get("/products", async (req, res) => {   
+    if (req.session.passport) {
         const { limit, page, sort, title, stock } = req.query;
         try {
+            const { email, rol } = await managerSessions.profileUser(req.session.passport.user);
             const products = await managerProducts.getProducts(limit, page, sort, title, stock);
             res.render("products", {
-                products, user, rol
+                products, email, rol
             });
         } catch (e) {
             return e;
@@ -125,6 +115,18 @@ router.get("/carts/:cid", async (req, res) => {
     } catch (e) {
         return e;
     }
+});
+
+router.get("/realtimeproducts", async (req, res) => {
+
+    res.render("realtimeproducts");
+
+});
+
+router.get("/chat", async (req, res) => {
+
+    res.render("chat");
+
 });
 
 export default router;

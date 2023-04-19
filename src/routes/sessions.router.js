@@ -5,9 +5,52 @@ sessionsRouter.use(json());
 sessionsRouter.use(urlencoded({ extended: true }));
 
 import { SessionManager } from "../dao/index.js";
+import passport from "passport";
 
 const manager = new SessionManager();
 
+sessionsRouter.post("/register", 
+    passport.authenticate("register", 
+    {
+        failureRedirect: '/login?result=98',
+    }),
+    async (req, res) => {
+        const resUser = "99";
+        res.redirect('/login?result=' + resUser);
+    }
+)
+
+sessionsRouter.post("/login", 
+    passport.authenticate("login", {
+        failureRedirect: '/login?result=2'
+    }),
+    async (req, res) => {
+        //console.log(req.user);
+        if (!req.user) {
+            res.redirect('/login?result=3');
+        }
+        res.redirect("/products");
+    }
+)
+
+sessionsRouter.get("/github", 
+    passport.authenticate("github", {scope: ["user:email"]}),
+    async (req, res) => {
+        //
+    }
+)
+
+sessionsRouter.get("/github-callback",
+    passport.authenticate("github", {
+        failureRedirect: '/login?result=96'
+    }),
+    async (req, res) => {
+        req.session.user = req.user;
+        res.redirect("/login");
+    }
+)
+
+/*
 sessionsRouter.post("/register", async (req, res) => {
     const { first_name, last_name, email, age, password } = req.body;
     try {
@@ -17,9 +60,9 @@ sessionsRouter.post("/register", async (req, res) => {
         //Se produjo un error al intentar registrar al usuario;
         return "98";
     }
-})
+})*/
 
-sessionsRouter.post("/login", async (req, res) => {
+/*sessionsRouter.post("/login", async (req, res) => {
     const { user, password } = req.body;
     
     try {
@@ -39,6 +82,6 @@ sessionsRouter.post("/login", async (req, res) => {
         //Se produjo un error al validar el usuario;
         return "3";
     }
-})
+})*/
 
 export default sessionsRouter;

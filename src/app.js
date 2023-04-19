@@ -15,6 +15,9 @@ import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 
+import passport from "passport";
+import { initializePassport } from "./config/passport.config.js";
+
 const app = express();
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
@@ -96,6 +99,10 @@ app.use((req, res, next) => {
     req.socketServer = socketServer;
     next();
 })
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);

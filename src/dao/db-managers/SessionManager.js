@@ -1,7 +1,18 @@
+import { createHash, isValidPassword } from "../../utils.js";
 import userModel from "../models/UserModel.js";
 
 export default class SessionManager {
-  addUser = async (first_name, last_name, email, age, password, rol = "usuario" )=> {
+
+  profileUser = async (user)=> {
+    try {
+      const findUser = await userModel.findOne({_id: user});
+      return (findUser);
+    } catch (e) {
+      return "Se produjo un error al buscar el usuario";
+    }
+  }
+  
+  /*addUser = async (first_name, last_name, email, age, password, rol = "Usuario" )=> {
 
     if (!first_name || !last_name || !email || !age || !password ) {
       //Error! Algún campo está incompleto;
@@ -19,7 +30,7 @@ export default class SessionManager {
                 last_name,
                 email,
                 age,
-                password,
+                password: createHash(password),
                 rol
               });
               //Usuario registrado de manera exitosa;
@@ -46,13 +57,13 @@ export default class SessionManager {
         return ({email: user});
       } else {
         try {
-          const findUser = await userModel.findOne({email: user, password: password})
-          if(!findUser){
-            //Error! Usuario y/o contraseña incorrecto;
-            return "2";
-          } else {
+          const findUser = await userModel.findOne({email: user})
+          if(findUser && isValidPassword(findUser.password,password)){
             //Acceso correcto
             return (findUser);
+          } else {
+            //Error! Usuario y/o contraseña incorrecto;
+            return "2";
           }
         } catch (e) {
           //Se produjo un error al validar el usuario;
@@ -60,14 +71,6 @@ export default class SessionManager {
         }
       }
     }
-  }
+  }*/
 
-  profileUser = async (user)=> {
-    try {
-      const findUser = await userModel.findOne({email: user});
-      return (findUser);
-    } catch (e) {
-      return "Se produjo un error al buscar el usuario";
-    }
-  }
 }

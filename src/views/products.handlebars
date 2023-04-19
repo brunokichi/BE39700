@@ -1,10 +1,10 @@
 <div>
   <div>
-    Bienvenido {{ user }} - 
+    Bienvenido {{ email }} - 
     {{#if rol}}
-    Administrador
+    {{ rol }}
     {{else}}
-    Usuario
+    Administrador
     {{/if}}
     <a href="/profile"><button type="button" id="profile" style="margin-left:1%"> Mi perfil </button></a>
     <a href="/logout"><button type="button" id="logout" style="margin-left:1%"> Cerrar sesión </button></a>
