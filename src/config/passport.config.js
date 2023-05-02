@@ -1,12 +1,20 @@
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import GithubStrategy from "passport-github2";
+
+import jwt from "passport-jwt";
+
 import userModel from "../dao/models/UserModel.js"
 import { createHash, isValidPassword } from "../utils.js";
 
+const jwtStrategy = jwt.Strategy;
+const extractJwt = jwt.ExtractJwt;
+
+const secret = "coder-secret";
+
 const initializePassport = ()=>{
     
-  passport.use("register",new LocalStrategy(        
+  passport.use("registerLocal",new LocalStrategy(        
         {
             usernameField: "email",
             passReqToCallback:true
@@ -36,7 +44,7 @@ const initializePassport = ()=>{
                       email: username,
                       age,
                       password: createHash(password),
-                      rol
+                      rol,
                     });
                     //Usuario registrado de manera exitosa;
                     //return "99";
@@ -54,7 +62,7 @@ const initializePassport = ()=>{
         }
   ));
 
-  passport.use("login", new LocalStrategy(
+  passport.use("loginLocal", new LocalStrategy(
         { 
             usernameField: "user" 
         },
@@ -84,6 +92,21 @@ const initializePassport = ()=>{
         }
   ))
 
+  passport.use("loginJWT", new jwtStrategy(
+    {
+        jwtFromRequest: extractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: secret
+    },
+      async(jwt_payload,done)=>{
+        try {
+            return done(null,jwt_payload)
+        } catch (error) {
+            return done(error);
+        }
+    }
+  ))
+
+  
   passport.use("github", new GithubStrategy(
     {
       clientID: "Iv1.4416828e59d70bbf",
@@ -133,4 +156,13 @@ const initializePassport = ()=>{
     });
 };
 
-export { initializePassport };
+const cookieExtractor = (req)=>{
+  let token = null;
+  if(req && req.cookies){
+      token = req.cookies["coder-cookie"]
+  }
+  return token;
+}
+
+export { initializePassport, cookieExtractor };
+

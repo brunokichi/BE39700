@@ -3,16 +3,17 @@ import userModel from "../models/UserModel.js";
 
 export default class SessionManager {
 
-  profileUser = async (user)=> {
+  profileUser = async (id)=> {
+    //console.log(id);
     try {
-      const findUser = await userModel.findOne({_id: user});
+      const findUser = await userModel.findOne({_id: id});
       return (findUser);
     } catch (e) {
       return "Se produjo un error al buscar el usuario";
     }
   }
   
-  /*addUser = async (first_name, last_name, email, age, password, rol = "Usuario" )=> {
+  addUser = async (first_name, last_name, email, age, password, rol = "Usuario" )=> {
 
     if (!first_name || !last_name || !email || !age || !password ) {
       //Error! Algún campo está incompleto;
@@ -71,6 +72,6 @@ export default class SessionManager {
         }
       }
     }
-  }*/
+  }
 
 }

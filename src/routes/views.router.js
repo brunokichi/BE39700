@@ -1,5 +1,6 @@
 import express from "express";
 import { ProductManager, CartManager, SessionManager } from "../dao/index.js"
+import passport from "passport";
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.get("/", async (req, res) => {
 
 router.get("/login", async (req, res) => {
     const session = req.session.passport;
-    if (!session) { 
+    if (!session) {
         const { result } = req.query;
         let mensajeResultado = "";
         switch (result) {
@@ -33,6 +34,9 @@ router.get("/login", async (req, res) => {
                 break;
             case '3':
                 mensajeResultado = "Error! No se pudo validar el usuario";
+                break;
+            case '4':
+                mensajeResultado = "Error! Acceso no autorizado";
                 break;
             case '96':
                 mensajeResultado = "Error! No se pudo validar el email"
@@ -64,36 +68,42 @@ router.get("/register", async (req, res) => {
     }
 });
 
-router.get("/profile", async (req, res) => {
+router.get("/profile", passport.authenticate("loginJWT" , {session:false, failureRedirect: '/login?result=4'} ), async (req, res) => {
     /*const user = req.session.user;
-    if (user) {*/
-    if (req.session.passport) {
+    if (user) {
+    if (req.session.passport) {*/
         try {
             //const { first_name, last_name, email, age, rol } = await managerSessions.profileUser(user);
-            const { first_name, last_name, email, age, rol } = await managerSessions.profileUser(req.session.passport.user);
+            //const { first_name, last_name, email, age, rol } = await managerSessions.profileUser(req.session.passport.user);
+            const { first_name, last_name, email, age, rol } = await managerSessions.profileUser(req.user._id);
             res.render("profile", { first_name, last_name, email, age, rol } );
         } catch (e) {
             return e;
         }
-    } else {
-        res.redirect("/");
-    }
 });
 
 router.get("/logout", async (req, res) => {
-    req.session.destroy((err) => {
+    req.logout((err)=>{
+        if (err) {
+            return res.status(500).send({ status: "error", data: err});
+        }
+        res.clearCookie("coder-cookie");
+        res.redirect("/");
+    });
+    /*req.session.destroy((err) => {
         if (err) {
             return res.status(500).send({ status: "error", data: err});
         }
         res.redirect("/");
-    })
+    })*/
 });
 
-router.get("/products", async (req, res) => {   
-    if (req.session.passport) {
+router.get("/products", passport.authenticate("loginJWT" , {session:false, failureRedirect: '/login?result=4' } ), async (req, res) => {   
+    //if (req.session.passport) {
         const { limit, page, sort, title, stock } = req.query;
         try {
-            const { email, rol } = await managerSessions.profileUser(req.session.passport.user);
+            //const { email, rol } = await managerSessions.profileUser(req.session.passport.user);
+            const { email, rol } = req.user;
             const products = await managerProducts.getProducts(limit, page, sort, title, stock);
             res.render("products", {
                 products, email, rol
@@ -101,9 +111,9 @@ router.get("/products", async (req, res) => {
         } catch (e) {
             return e;
         }
-    } else {
+    /*} else {
         res.redirect("/");
-    }
+    }*/
 });
 
 router.get("/carts/:cid", async (req, res) => {

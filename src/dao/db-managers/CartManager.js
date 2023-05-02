@@ -30,7 +30,7 @@ export default class CartManager {
   addCart = async () => {
     try {
       const newCart = await cartModel.create({});
-      return `Carrito generado con ID ${newCart._id}`;
+      return `${newCart._id}`;
     } catch (e) {
       return "Se produjo un error al crear un nuevo carrito";
     }
