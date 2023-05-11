@@ -77,7 +77,8 @@ export default class ProductManager {
             });
             return "Producto cargado";
           } catch (e) {
-            return "Se produjo un error al cargar el producto";
+            //return "Se produjo un error al cargar el producto";
+            return e;
           }
         }
       } catch (e) {

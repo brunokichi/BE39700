@@ -7,10 +7,14 @@ import jwt from "passport-jwt";
 import userModel from "../dao/models/UserModel.js"
 import { createHash, isValidPassword } from "../utils.js";
 
+import { config } from "../config/config.js";
+const tokenSecret = config.token.secret;
+const tokenCookie = config.token.cookie;
+
 const jwtStrategy = jwt.Strategy;
 const extractJwt = jwt.ExtractJwt;
 
-const secret = "coder-secret";
+//const secret = tokenSecret;
 
 const initializePassport = ()=>{
     
@@ -95,7 +99,7 @@ const initializePassport = ()=>{
   passport.use("loginJWT", new jwtStrategy(
     {
         jwtFromRequest: extractJwt.fromExtractors([cookieExtractor]),
-        secretOrKey: secret
+        secretOrKey: tokenSecret
     },
       async(jwt_payload,done)=>{
         try {
@@ -159,7 +163,7 @@ const initializePassport = ()=>{
 const cookieExtractor = (req)=>{
   let token = null;
   if(req && req.cookies){
-      token = req.cookies["coder-cookie"]
+      token = req.cookies[tokenCookie]
   }
   return token;
 }

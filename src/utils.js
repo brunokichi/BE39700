@@ -1,12 +1,15 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
+
+import { config } from "./config/config.js";
+const tokenSecret = config.token.secret;
 //import { log } from "console";
 
 // Debemos crear nuestra propia variable __dirname a través de este método si usamos ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const secretToken = "coder-key";
+//const secretToken = "coder-key";
 
 export const createHash = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
@@ -24,7 +27,7 @@ export const generateToken = (user) => {
       email: user.email,
       role: user.role,
     },
-    secretToken,
+    tokenSecret,
     { expiresIn: "24h" }
   );
   return token;
