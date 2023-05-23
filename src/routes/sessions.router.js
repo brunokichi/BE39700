@@ -1,5 +1,5 @@
 import { Router, json, urlencoded } from "express";
-import { SessionController } from "../controller/session.controller.js"
+import { SessionController } from "../controller/session.controller.js";
 
 import passport from "passport";
 

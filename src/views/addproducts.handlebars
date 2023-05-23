@@ -1,0 +1,40 @@
+<div style="text-align:center">
+  <h1>Plataforma de carga de productos</h1>
+  <div>
+    <a href="/"><button type="button" id="login" style="margin-right:2%"> Iniciar sesion </button></a>
+    <!--<a href="/api/sessions/github"><button type="button" id="login_github" style="margin-right:2%"> Iniciar sesion mediante GitHub </button></a>-->
+    <a href="/register"><button type="button" id="register" style="margin-right:2%"> Registrate </button></a>
+  </div>
+  <div style="margin-top:2%">
+    <form method="post" action="/api/products">
+    <label for="title">Titulo</label>
+      <input type="text" id="title" name="title" value="titulo100"/>
+    </br>
+    <label for="description">Descripción</label>
+      <input type="text" id="description" name="description" value="titulo100"/>
+    </br>
+    <label for="code">Código</label>
+      <input type="text" id="code" name="code" value="11223365"/>
+    </br>
+    <label for="price">Precio</label>
+      <input type="text" id="price" name="price" value="656"/>
+    </br>
+    <label for="status">Estado</label>
+      <input type="text" id="status" name="status" value="true"/>
+    </br>
+    <label for="stock">Stock</label>
+      <input type="text" id="stock" name="stock" value="1"/>
+    </br>
+    <label for="category">Categoria</label>
+      <input type="text" id="category" name="category" value="autos"/>
+    </br>
+    <label for="thumbnail">Miniatura</label>
+      <input type="text" id="thumbnail" name="thumbnail" value="sedan,audi"/>
+    </br>
+    {{mensajeResultado}}
+    </br>
+    <button type="submit" style="margin-top:1%"> Enviar </button>
+    </form>
+  </div>
+  
+</div>

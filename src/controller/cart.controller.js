@@ -22,7 +22,8 @@ class CartController{
     static addCart = async (req,res)=>{
         try {
             const newCart = await CartService.addCart();
-            res.send(newCart);
+            return newCart;
+            //res.send(newCart);
         } catch (e) {
             return e;
         }
@@ -72,6 +73,16 @@ class CartController{
             res.json(delProducts);
         } catch (e) {
             return "Se produjo un error al vaciar el carrito";
+        }
+    };
+
+    static purchase = async (req,res)=>{
+        try {
+            const newPurchase = await CartService.purchase(req.params.cid, req.user);
+            //return newPurchase;
+            res.send(newPurchase);
+        } catch (e) {
+            return e;
         }
     };
 }

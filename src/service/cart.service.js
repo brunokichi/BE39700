@@ -44,6 +44,11 @@ class CartService{
         return delProducts;
     }
 
+    static purchase = (cid, user)=>{
+        const newPurchase =  manager.purchase(cid, user);
+        return newPurchase;
+    }
+
 };
 
 export { CartService }

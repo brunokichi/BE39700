@@ -4,8 +4,13 @@ const manager = new SessionManager();
 
 class SessionService{
     static addUser = (first_name, last_name, email, age, password)=>{
-        const resLogin =  manager.addUser(first_name, last_name, email, age, password);
-        return resLogin;
+        const resaddUser =  manager.addUser(first_name, last_name, email, age, password);
+        return resaddUser;
+    }
+
+    static addUserCart = (email,resCart)=>{
+        const resUserCart =  manager.addUserCart(email,resCart);
+        return resUserCart;
     }
     
     static loginUser = (user, password)=>{

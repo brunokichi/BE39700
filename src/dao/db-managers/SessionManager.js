@@ -10,9 +10,11 @@ export default class SessionManager {
     //console.log(id);
     try {
       const findUser = await userModel.findOne({ _id: id });
+      console.log(findUser);
       return findUser;
     } catch (e) {
-      return "Se produjo un error al buscar el usuario";
+      return (e);
+      //return "Se produjo un error al buscar el usuario";
     }
   };
 
@@ -56,6 +58,29 @@ export default class SessionManager {
       }
     }
   };
+
+  addUserCart = async (
+    email,
+    resCart
+  ) => {
+    try {
+      const validEmail = await userModel.findOne({ email: email });
+      if (!validEmail || validEmail.rol === "Admin") {
+        return "95";
+      }
+      try {
+        const result = await userModel.updateOne({ _id: validEmail._id} ,  {cart: resCart});
+        //return result;
+        //Usuario registrado de manera exitosa;
+        return "99";
+      } catch (e) {
+        //Se produjo un error al registrar el usuario;
+        return "98";
+      }
+    } catch (e) {
+      return "97";
+    }
+  }
 
   loginUser = async (user, password) => {
     if (!user || !password) {

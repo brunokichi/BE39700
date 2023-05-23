@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+//import { cartModel } from "./CartModel.js";
 
 const usersSchema = new mongoose.Schema({
   first_name: {
@@ -24,6 +25,7 @@ const usersSchema = new mongoose.Schema({
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "carts",
+    //ref: cartModel,
   },
   rol: {
     type: String,

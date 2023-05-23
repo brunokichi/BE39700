@@ -1,17 +1,52 @@
 import { SessionService } from "../service/session.service.js";
+import { CartController } from "../controller/cart.controller.js";
 
 import jwt from "jsonwebtoken";
+import passport from "passport";
 
 import { config } from "../config/config.js";
 const tokenSecret = config.token.secret;
 const tokenCookie = config.token.cookie;
 
 class SessionController{
+
+    static loginController = (req, res, next) => {
+        passport.authenticate("loginJWT",{session:false}, 
+            (err, user, info) => {
+                if (err) return next(err);
+                req.user = user;
+                if (!user) {
+                    res.clearCookie(tokenCookie).redirect("/login?result=4")
+                }
+                next();
+        })(req, res, next);
+    }
     
+    /*static loginController = passport.authenticate("loginJWT",{
+        session:false, 
+        failureRedirect:"/login?result=4"
+    });*/
+
+    static checkRol = (roles)=>{
+        return (req,res,next)=>{
+            console.log(req.user);
+            if(!roles.includes(req.user.rol)){
+                return res.clearCookie(tokenCookie).redirect("/login?result=4");
+            }
+            next();
+        }
+    }
+
     static addUser = async (req,res)=>{
         const { first_name, last_name, email, age, password } = req.body;
         try {
             const resUser = await SessionService.addUser(first_name, last_name, email, age, password);
+            console.log(resUser);
+            if (resUser =='99') {
+                const resCart = await CartController.addCart();
+                const resUserCart = await SessionService.addUserCart(email,resCart);
+                res.redirect('/login?result=' + resUserCart);
+            }
             res.redirect('/login?result=' + resUser);
         } catch (e) {
             //Se produjo un error al intentar registrar al usuario;
@@ -26,7 +61,7 @@ class SessionController{
             if (!resLogin.email){
                 res.redirect('/login?result=' + resLogin);
             } else {
-                const token = jwt.sign({_id: resLogin._id, first_name: resLogin.first_name, email: resLogin.email, rol: resLogin.rol}, tokenSecret, {expiresIn:"24h"});
+                const token = jwt.sign({_id: resLogin._id, first_name: resLogin.first_name, email: resLogin.email, rol: resLogin.rol, cart: resLogin.cart}, tokenSecret, {expiresIn:"24h"});
                 res.cookie(tokenCookie, token,{
                     httpOnly:true
                 })

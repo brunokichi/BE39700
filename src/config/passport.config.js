@@ -105,7 +105,7 @@ const initializePassport = ()=>{
         try {
             return done(null,jwt_payload)
         } catch (error) {
-            return done(error);
+          return done(error);
         }
     }
   ))

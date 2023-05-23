@@ -1,28 +1,30 @@
 <div>
   <div>
-    Bienvenido {{ email }} - 
-    {{#if rol}}
-    {{ rol }}
-    {{else}}
-    Administrador
-    {{/if}}
+    Bienvenido {{ email }} - {{ rol }}
     <a href="/profile"><button type="button" id="profile" style="margin-left:1%"> Mi perfil </button></a>
     <a href="/logout"><button type="button" id="logout" style="margin-left:1%"> Cerrar sesión </button></a>
-  </div>
+  </div><br />
+  <form action="/api/carts/{{cart}}/purchase" method="post">
+    <input type="submit" value="Realizar compra"/>
+  </form>
   <h1>Lista de productos</h1>
-  <h3>El agregado al carrito apunta al ID 641f5685236f0ed708eb3b91</h3>
   
-  {{#each products.docs}}
 
+  {{#each products.docs}}
+    
     <p>
-      <form action="/api/carts/641f5685236f0ed708eb3b91/product/{{id}}" method="post">
-        ID: {{id}} / Título: {{title}} <br />
-        Descripción: {{description}} / Precio: {{price}} <br />
-        Miniaturas: {{thumbnail}} / Código: {{code}} <br />
-        Stock: {{stock}} / Categoria: {{category}} <br />
-        Estado: {{status}} <br />
-        <input type="submit" value="Agregar al carrito" />
-      </form>
+        {{#if ../cart }}
+          <form action="/api/carts/{{../cart}}/product/{{id}}" method="post">
+        {{/if}}   
+            ID: {{id}} / Título: {{title}} <br />
+            Descripción: {{description}} / Precio: {{price}} <br />
+            Miniaturas: {{thumbnail}} / Código: {{code}} <br />
+            Stock: {{stock}} / Categoria: {{category}} <br />
+            Estado: {{status}} <br />
+            {{#if ../cart }}
+            <input type="submit" value="Agregar al carrito"/>
+          </form>
+        {{/if}} 
     </p>
   {{/each}}
 

@@ -35,6 +35,8 @@ app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/../public"));
 app.use(cookieParser());
 
+
+
 const main = async () => {
   mongoose
     .connect(database)
