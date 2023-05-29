@@ -25,6 +25,8 @@ const port = config.server.port;
 const database = config.db.mongoUrl;
 const tokenSecret = config.token.secret;
 
+import { errorHandler } from "./dao/error-managers/ErrorManager.js";
+
 const app = express();
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
@@ -117,3 +119,5 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/chat", chatsRouter);
 app.use("/api/sessions", sessionsRouter);
+
+app.use(errorHandler);

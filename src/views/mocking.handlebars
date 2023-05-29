@@ -1,0 +1,19 @@
+<div>
+  <div>
+    Mocking Products
+    
+  </div><br />
+  <h1>Lista de productos</h1>
+  
+  {{#each products}}
+    
+    <p>
+      ID: {{id}} / Título: {{title}} <br />
+      Descripción: {{description}} / Precio: $ {{price}} <br />
+      Miniaturas: {{thumbnail}} / Código: {{code}} <br />
+      Stock: {{stock}} / Categoria: {{category}} <br />
+      Estado: {{status}} <br />
+    </p>
+  {{/each}}
+
+</div>

@@ -1,4 +1,10 @@
 import productModel from "../models/ProductModel.js";
+import { generateProduct } from "../../utils.js";
+
+import { CustomError } from "../../service/errors/error.service.js";
+import { EError, MError } from "../../service/errors/enums.js";
+import { generateErrorDB } from "../../service/errors/errorDatabase.js";
+import { generateErrorProduct } from "../../service/errors/errorProduct.js";
 
 export default class ProductManager {
 
@@ -27,7 +33,14 @@ export default class ProductManager {
         })
       return products;
       } catch (e) {
-        return e.message;
+        //return e.message;
+        CustomError.createError({
+          name:"DB Error en busqueda de productos",
+          cause:generateErrorDB(MError.DB04),
+          message: MError.DB04,
+          errorCode: EError.DB_ERROR
+        });
+        return "DB Error en busqueda de productos";
       }
   };
   
@@ -36,7 +49,14 @@ export default class ProductManager {
       const product = await productModel.findById(productId);
       return product;
     } catch (e) {
-      return e.message;
+      //return e.message;
+      CustomError.createError({
+        name:"DB Error en busqueda de producto mediante ID",
+        cause:generateErrorDB(MError.DB04),
+        message: MError.DB04,
+        errorCode: EError.DB_ERROR
+      });
+      return "DB Error en busqueda de producto mediante ID";
     }
   }; 
   
@@ -52,17 +72,45 @@ export default class ProductManager {
   ) => {
     
     if (!title || !description || !code || !price || !stock || !category) {
-      return "Error! Algún campo está incompleto";
+      //return "Error! Algún campo está incompleto";
+      CustomError.createError({
+        name:"Error en creacion de producto",
+        cause:generateErrorProduct('completo', MError.PR01, title, description, code, price, stock, category),
+        message: MError.PR01,
+        errorCode: EError.PRODUCT_ERROR
+      });
+      return "Error en creacion de producto";
     } else if (typeof price != "number") {
-      return "Error! El valor del campo precio no es válido";
+      //return "Error! El valor del campo precio no es válido";
+      CustomError.createError({
+        name:"Error en creacion de producto",
+        cause:generateErrorProduct('completo', MError.PR01, title, description, code, price, stock, category),
+        message: MError.PR01,
+        errorCode: EError.PRODUCT_ERROR
+      });
+      return "Error en creacion de producto";
     } else if (typeof stock != "number") {
-      return "Error! El valor del campo stock no es válido";
+      //return "Error! El valor del campo stock no es válido";
+      CustomError.createError({
+        name:"Error en creacion de producto",
+        cause:generateErrorProduct('completo', MError.PR01, title, description, code, price, stock, category),
+        message: MError.PR01,
+        errorCode: EError.PRODUCT_ERROR
+      });
+      return "Error en creacion de producto";
     } else {
 
       try {
         const product = await productModel.findOne({ code: code });
         if (product) {
-          return `Error! el producto con código ${code} ya se encontraba cargado`;
+          //return `Error! el producto con código ${code} ya se encontraba cargado`;
+          CustomError.createError({
+            name:"Error en creacion de producto",
+            cause:generateErrorProduct('completo', MError.PR02, title, description, code, price, stock, category),
+            message: MError.PR02,
+            errorCode: EError.PRODUCT_ERROR
+          });
+          return "Error en creacion de producto";
         } else {
           try {
             const newProduct = await productModel.create({
@@ -78,11 +126,25 @@ export default class ProductManager {
             return "Producto cargado";
           } catch (e) {
             //return "Se produjo un error al cargar el producto";
-            return e;
+            //return e;
+            CustomError.createError({
+              name:"DB Error en carga de producto",
+              cause:generateErrorDB(MError.DB05),
+              message: MError.DB05,
+              errorCode: EError.DB_ERROR
+            });
+            return "DB Error en carga de producto";
           }
         }
       } catch (e) {
-        return "Se produjo un error al validar la existencia del código de producto";
+        //return "Se produjo un error al validar la existencia del código de producto";
+        CustomError.createError({
+          name:"DB Error al validar la existencia del código de producto en carga",
+          cause:generateErrorDB(MError.DB05),
+          message: MError.DB05,
+          errorCode: EError.DB_ERROR
+        });
+        return "DB Error al validar la existencia del código de producto en carga";
       }
     }
   };
@@ -92,7 +154,14 @@ export default class ProductManager {
       const result = await productModel.updateOne({ _id: productId} ,  updateProductData);
       return result;
     } catch (e) {
-      return e.message;
+      //return e.message;
+      CustomError.createError({
+        name:"DB Error al actualizar un producto",
+        cause:generateErrorDB(MError.DB05),
+        message: MError.DB06,
+        errorCode: EError.DB_ERROR
+      });
+      return "DB Error al actualizar un producto";
     }
   };
   
@@ -102,10 +171,33 @@ export default class ProductManager {
       if(result.deletedCount > 0) {
         return `Producto ID ${productId} eliminado`;
       } else {
-        return `Producto ID ${productId} inexistente`;
+        //return `Producto ID ${productId} inexistente`;
+        CustomError.createError({
+          name:"Error! ID producto inexistente",
+          cause:generateErrorProduct('simple', MError.PR04, '', '', '' , '', '', '', productId),
+          message: MError.PR04,
+          errorCode: EError.PRODUCT_ERROR
+        });
+        return "Error! ID producto inexistente";
       }
     } catch (e) {
-      return e.message;
+      //return e.message;
+      CustomError.createError({
+        name:"DB Error al eliminar un producto",
+        cause:generateErrorDB(MError.DB06),
+        message: MError.DB06,
+        errorCode: EError.DB_ERROR
+      });
+      return "DB Error al eliminar un producto";
     }
   };
+
+  getMockingProducts = () => {
+    let products = [];
+    for(let i=0;i<=100;i++){
+        const product = generateProduct();
+        products.push(product);
+    }
+    return products;
+  }; 
 }

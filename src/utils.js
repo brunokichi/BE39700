@@ -1,6 +1,8 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
+//import { faker } from '@faker-js/faker'
+import { fakerES as faker } from '@faker-js/faker'
 
 import { config } from "./config/config.js";
 const tokenSecret = config.token.secret;
@@ -32,5 +34,19 @@ export const generateToken = (user) => {
   );
   return token;
 };
+
+export const generateProduct = ()=>{
+  return {
+      id: faker.database.mongodbObjectId(),
+      title: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      price: parseFloat(faker.commerce.price()),
+      thumbnail: faker.image.url(),
+      code: faker.string.alphanumeric(10),
+      stock: parseInt(faker.string.numeric(2)),
+      category: faker.commerce.department(),
+      status: faker.datatype.boolean(),
+  }
+}
 
 export default __dirname;

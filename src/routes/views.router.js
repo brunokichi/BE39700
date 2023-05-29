@@ -1,6 +1,6 @@
 import { Router, json, urlencoded } from "express";
-import { ViewsController } from "../controller/views.controller.js"
-import { SessionController } from "../controller/session.controller.js"
+import { ViewsController } from "../controller/views.controller.js";
+import { SessionController } from "../controller/session.controller.js";
 import passport from "passport";
 
 const router = Router();
@@ -20,6 +20,7 @@ router.get("/register", ViewsController.register);
 router.get("/profile", SessionController.loginController, ViewsController.profileUser);
 router.get("/products", SessionController.loginController, ViewsController.getProducts);
 router.get("/realtimeproducts", ViewsController.realtimeproducts);
+router.get("/mockingproducts", ViewsController.mockingproducts);
 
 
 export default router;

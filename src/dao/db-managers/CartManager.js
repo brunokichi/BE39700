@@ -2,6 +2,11 @@ import cartModel from "../models/CartModel.js";
 import productModel from "../models/ProductModel.js";
 import { TicketManager, ProductManager } from "../index.js";
 
+import { CustomError } from "../../service/errors/error.service.js";
+import { EError, MError } from "../../service/errors/enums.js";
+import { generateErrorDB } from "../../service/errors/errorDatabase.js";
+import { generateErrorProduct } from "../../service/errors/errorProduct.js";
+
 export default class CartManager {
 
   getCarts = async () => {
@@ -12,6 +17,13 @@ export default class CartManager {
       .populate("products.product");
       return carts;
     } catch (e) {
+      //return "Se produjo un error al buscar los carritos";
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
       return "Se produjo un error al buscar los carritos";
     }
   };
@@ -24,7 +36,14 @@ export default class CartManager {
       .populate("products.product");
       return cart;
     } catch (e) {
-      return `Carrito ID ${idCart} no encontrado`;
+      //return `Carrito ID ${idCart} no encontrado`;
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al buscar el/los carritos";
     }
   };
 
@@ -33,7 +52,15 @@ export default class CartManager {
       const newCart = await cartModel.create({});
       return `${newCart._id}`;
     } catch (e) {
-      return "Se produjo un error al crear un nuevo carrito";
+      //return "Se produjo un error al crear un nuevo carrito";
+      CustomError.createError({
+        name:"DB Error en creacion de carrito",
+        cause:generateErrorDB(MError.DB08),
+        message: MError.DB08,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al crear el carrito";
+      
     }
   };
 
@@ -54,10 +81,24 @@ export default class CartManager {
           return cart.save();
         }
       } catch (e) {
-        return "ID de producto inexistente";
+        //return "ID de producto inexistente";
+        CustomError.createError({
+          name:"Error! ID producto inexistente",
+          cause:generateErrorProduct('simple', MError.PR04, '', '', '' , '', '', '', pid),
+          message: MError.PR04,
+          errorCode: EError.PRODUCT_ERROR
+        });
+        return "Error! ID producto inexistente";
       }
     } catch (e) {
-      return "Carrito no encontrado";
+      //return "Carrito no encontrado";
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al buscar el/los carritos";
     }
   };
 
@@ -66,7 +107,14 @@ export default class CartManager {
       const result = await cartModel.findByIdAndUpdate(cid, { products: products });
       return "Carrito actualizado";
     } catch (e) {
-      return "ID de carrito inexistente";
+      //return "ID de carrito inexistente";
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al buscar el/los carritos";
     }
   };
 
@@ -82,10 +130,24 @@ export default class CartManager {
         return cart.save();
 
       } else {
-        return "Producto no encontrado en el carrito";
+        //return "Producto no encontrado en el carrito";
+        CustomError.createError({
+          name:"Error! ID producto inexistente",
+          cause:generateErrorProduct('simple', MError.PR04, '', '', '' , '', '', '', pid),
+          message: MError.PR04,
+          errorCode: EError.PRODUCT_ERROR
+        });
+        return "Error! ID producto inexistente";
       }
     } catch (e) {
-      return "Carrito no encontrado";
+      //return "Carrito no encontrado";
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al buscar el/los carritos";
     }
   };
 
@@ -99,10 +161,24 @@ export default class CartManager {
         cart.save();
         return `Producto ID ${pid} eliminado del carrito`;
       } else {
-        return `Producto ID ${pid} no encontrado en el carrito`;
+        //return `Producto ID ${pid} no encontrado en el carrito`;
+        CustomError.createError({
+          name:"Error! ID producto inexistente",
+          cause:generateErrorProduct('simple', MError.PR04, '', '', '' , '', '', '', pid),
+          message: MError.PR04,
+          errorCode: EError.PRODUCT_ERROR
+        });
+        return "Error! ID producto inexistente";
       }
     } catch (e) {
-      return "Carrito no encontrado";
+      //return "Carrito no encontrado";
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al buscar el/los carritos";
     }
   };
 
@@ -111,7 +187,14 @@ export default class CartManager {
       const result = await cartModel.updateOne({ _id: cid}, { products: []});
       return "Carrito vaciado exitosamente";
     } catch (e) {
-      return "Carrito no encontrado";
+      //return "Carrito no encontrado";
+      CustomError.createError({
+        name:"DB Error en busqueda de carritos",
+        cause:generateErrorDB(MError.DB07),
+        message: MError.DB07,
+        errorCode: EError.DB_ERROR
+      });
+      return "Se produjo un error al buscar el/los carritos";
     }
   };
 
@@ -151,7 +234,14 @@ export default class CartManager {
                       return "No se pudo actualizar el carrito";
                   }
             } catch (e) {
-              return "No se pudo generar el ticket";
+              //return "No se pudo generar el ticket";
+              CustomError.createError({
+                name:"DB Error en generacion de ticket",
+                cause:generateErrorDB(MError.DB09),
+                message: MError.DB09,
+                errorCode: EError.DB_ERROR
+              });
+              return "Se produjo un error al generar el ticket en CartManager";
             }
           } else {
             return "No hay stock suficiente para realizar la operación";
@@ -163,7 +253,14 @@ export default class CartManager {
         res.send("Carrito inexistente");
       }
     } catch (e) {
-      res.send("Se produjo un error al buscar el carrito");
+        //res.send("Se produjo un error al buscar el carrito");
+        CustomError.createError({
+          name:"DB Error en busqueda de carritos",
+          cause:generateErrorDB(MError.DB07),
+          message: MError.DB07,
+          errorCode: EError.DB_ERROR
+        });
+        return "Se produjo un error al buscar el/los carritos";
     }
   };
 }

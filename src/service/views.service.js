@@ -19,6 +19,11 @@ class ViewsService{
         const cart =  await managerCarts.getCartById(cid);
         return cart;
     };
+
+    static mockingproducts = ()=> {
+        const resMockingProducts =  managerProducts.getMockingProducts();
+        return resMockingProducts;
+    };
 }
 
 export { ViewsService }
