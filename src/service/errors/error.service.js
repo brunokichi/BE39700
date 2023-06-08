@@ -4,6 +4,6 @@ export class CustomError{
         error.name=name;
         error.code=code;
         console.log("error", error.cause);
-        throw error;
+        //throw error;
     }
 }

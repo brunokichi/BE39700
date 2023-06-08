@@ -24,6 +24,11 @@ class ViewsService{
         const resMockingProducts =  managerProducts.getMockingProducts();
         return resMockingProducts;
     };
+
+    static loggerTest = ()=> {
+        const resLoggerTest =  managerSessions.getLoggerTest();
+        return resLoggerTest;
+    };
 }
 
 export { ViewsService }

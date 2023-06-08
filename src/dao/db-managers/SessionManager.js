@@ -12,6 +12,9 @@ import { generateErrorUser } from "../../service/errors/errorUser.js";
 import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 import { generateErrorAuth } from "../../service/errors/errorAuth.js";
 
+import { addLogger } from "../../utils/logger.js";
+const logger = addLogger();
+
 export default class SessionManager {
   profileUser = async (id) => {
     try {
@@ -26,6 +29,7 @@ export default class SessionManager {
         message: MError.DB03,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB03} - ${new Date().toLocaleTimeString()}`);
       return "DB03";
     }
   };
@@ -47,6 +51,7 @@ export default class SessionManager {
         message: MError.US01,
         errorCode: EError.USU_ERROR
       });
+      logger.debug(`${MError.US01} - ${new Date().toLocaleTimeString()}`);
       return "US01";
     } else {
       try {
@@ -60,6 +65,7 @@ export default class SessionManager {
               message: MError.US02,
               errorCode: EError.USU_ERROR
             });
+            logger.debug(`${MError.US02} - ${email} - ${new Date().toLocaleTimeString()}`);
             return "US02";
           } else {
             try {
@@ -82,6 +88,7 @@ export default class SessionManager {
                 message: MError.DB02,
                 errorCode: EError.DB_ERROR
               });
+              logger.error(`${MError.DB02} - ${new Date().toLocaleTimeString()}`);
               return "DB02";
             }
           }
@@ -94,6 +101,7 @@ export default class SessionManager {
             message: MError.DB01,
             errorCode: EError.DB_ERROR
           });
+          logger.error(`${MError.DB01} - ${new Date().toLocaleTimeString()}`);
           return "DB01";
       }
     }
@@ -113,6 +121,7 @@ export default class SessionManager {
           message: MError.SYS01,
           errorCode: EError.SYS_ERROR
         });
+        logger.error(`${MError.SYS01} - ${new Date().toLocaleTimeString()}`);
         return "DB01";
       }
       try {
@@ -129,6 +138,7 @@ export default class SessionManager {
           message: MError.DB02,
           errorCode: EError.DB_ERROR
         });
+        logger.error(`${MError.DB02} - ${new Date().toLocaleTimeString()}`);
         return "DB02";
       }
     } catch (e) {
@@ -139,6 +149,7 @@ export default class SessionManager {
         message: MError.DB01,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB01} - ${new Date().toLocaleTimeString()}`);
       return "DB01";
     }
   }
@@ -153,10 +164,12 @@ export default class SessionManager {
         message: MError.US01,
         errorCode: EError.AUTH_ERROR
       });
+      logger.debug(`${MError.US01} - ${new Date().toLocaleTimeString()}`);
       return "US01";
     } else {
       if (user === adminUser && password === adminSecret) {
         //Acceso correcto
+        logger.info(`Atencion! Ingreso de usuario admin - ${new Date().toLocaleTimeString()}`);
         return {
           email: user,
           rol: "Admin",
@@ -178,6 +191,7 @@ export default class SessionManager {
               message: MError.AUTH01,
               errorCode: EError.AUTH_ERROR
             });
+            logger.info(`${MError.AUTH01} - ${user} - ${new Date().toLocaleTimeString()}`);
             return "AUTH01";
           }
         } catch (e) {
@@ -189,9 +203,19 @@ export default class SessionManager {
             message: MError.DB03,
             errorCode: EError.DB_ERROR
           });
+          logger.error(`${EError.DB_ERROR} - ${new Date().toLocaleTimeString()}`);
           return "DB03";
         }
       }
     }
   };
+
+  getLoggerTest = async () => {
+    logger.fatal(`Nivel fatal - ${new Date().toLocaleTimeString()}`);
+    logger.error(`Nivel error - ${new Date().toLocaleTimeString()}`);
+    logger.warning(`Nivel warning - ${new Date().toLocaleTimeString()}`);
+    logger.info(`Nivel info - ${new Date().toLocaleTimeString()}`);
+    logger.http(`Nivel http - ${new Date().toLocaleTimeString()}`);
+    logger.debug(`Nivel debug - ${new Date().toLocaleTimeString()}`);
+  }
 }

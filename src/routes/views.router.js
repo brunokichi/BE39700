@@ -21,6 +21,6 @@ router.get("/profile", SessionController.loginController, ViewsController.profil
 router.get("/products", SessionController.loginController, ViewsController.getProducts);
 router.get("/realtimeproducts", ViewsController.realtimeproducts);
 router.get("/mockingproducts", ViewsController.mockingproducts);
-
+router.get("/loggertest", ViewsController.loggerTest);
 
 export default router;

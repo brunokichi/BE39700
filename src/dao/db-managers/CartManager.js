@@ -7,6 +7,9 @@ import { EError, MError } from "../../service/errors/enums.js";
 import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 import { generateErrorProduct } from "../../service/errors/errorProduct.js";
 
+import { addLogger } from "../../utils/logger.js";
+const logger = addLogger();
+
 export default class CartManager {
 
   getCarts = async () => {
@@ -24,6 +27,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.erro(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar los carritos";
     }
   };
@@ -43,6 +47,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.erro(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar el/los carritos";
     }
   };
@@ -59,6 +64,7 @@ export default class CartManager {
         message: MError.DB08,
         errorCode: EError.DB_ERROR
       });
+      logger.erro(`${MError.DB08} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al crear el carrito";
       
     }
@@ -88,6 +94,7 @@ export default class CartManager {
           message: MError.PR04,
           errorCode: EError.PRODUCT_ERROR
         });
+        logger.info(`${MError.PR04} - ${pid} -  ${new Date().toLocaleTimeString()}`);
         return "Error! ID producto inexistente";
       }
     } catch (e) {
@@ -98,6 +105,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar el/los carritos";
     }
   };
@@ -114,6 +122,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar el/los carritos";
     }
   };
@@ -137,6 +146,7 @@ export default class CartManager {
           message: MError.PR04,
           errorCode: EError.PRODUCT_ERROR
         });
+        logger.info(`${MError.PR04} - ${new Date().toLocaleTimeString()}`);
         return "Error! ID producto inexistente";
       }
     } catch (e) {
@@ -147,6 +157,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar el/los carritos";
     }
   };
@@ -168,6 +179,7 @@ export default class CartManager {
           message: MError.PR04,
           errorCode: EError.PRODUCT_ERROR
         });
+        logger.info(`${MError.PR04} - ${new Date().toLocaleTimeString()}`);
         return "Error! ID producto inexistente";
       }
     } catch (e) {
@@ -178,6 +190,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar el/los carritos";
     }
   };
@@ -194,6 +207,7 @@ export default class CartManager {
         message: MError.DB07,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
       return "Se produjo un error al buscar el/los carritos";
     }
   };
@@ -241,9 +255,11 @@ export default class CartManager {
                 message: MError.DB09,
                 errorCode: EError.DB_ERROR
               });
+              logger.error(`${MError.DB09} - ${new Date().toLocaleTimeString()}`);
               return "Se produjo un error al generar el ticket en CartManager";
             }
           } else {
+            logger.info(`Cart ID ${cid} - Sin stock suficiente para realizar la operación - ${new Date().toLocaleTimeString()}`);
             return "No hay stock suficiente para realizar la operación";
           }
         } else {
@@ -260,6 +276,7 @@ export default class CartManager {
           message: MError.DB07,
           errorCode: EError.DB_ERROR
         });
+        logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
         return "Se produjo un error al buscar el/los carritos";
     }
   };

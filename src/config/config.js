@@ -10,6 +10,7 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const TOKEN_COOKIE = process.env.TOKEN_COOKIE;
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_SECRET = process.env.ADMIN_SECRET;
+const NODE_ENV = process.env.NODE_ENV;
 
 export const config = {
     db:{
@@ -25,5 +26,8 @@ export const config = {
     admin:{
         user:ADMIN_USER,
         secret:ADMIN_SECRET,
+    },
+    logger:{
+        node_env:NODE_ENV,
     }
 }

@@ -6,6 +6,8 @@ import { EError, MError } from "../../service/errors/enums.js";
 import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 import { generateErrorProduct } from "../../service/errors/errorProduct.js";
 
+import { addLogger } from "../../utils/logger.js";
+const logger = addLogger();
 export default class ProductManager {
 
   getProducts = async (limit, page, sort, title, stock) => {
@@ -40,6 +42,7 @@ export default class ProductManager {
           message: MError.DB04,
           errorCode: EError.DB_ERROR
         });
+        logger.error(`${MError.DB04} - ${new Date().toLocaleTimeString()}`);
         return "DB Error en busqueda de productos";
       }
   };
@@ -56,6 +59,7 @@ export default class ProductManager {
         message: MError.DB04,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB04} - ${new Date().toLocaleTimeString()}`);
       return "DB Error en busqueda de producto mediante ID";
     }
   }; 
@@ -79,6 +83,7 @@ export default class ProductManager {
         message: MError.PR01,
         errorCode: EError.PRODUCT_ERROR
       });
+      logger.debug(`${MError.PR01} - ${new Date().toLocaleTimeString()}`);
       return "Error en creacion de producto";
     } else if (typeof price != "number") {
       //return "Error! El valor del campo precio no es válido";
@@ -88,6 +93,7 @@ export default class ProductManager {
         message: MError.PR01,
         errorCode: EError.PRODUCT_ERROR
       });
+      logger.debug(`${MError.PR01} - ${new Date().toLocaleTimeString()}`);
       return "Error en creacion de producto";
     } else if (typeof stock != "number") {
       //return "Error! El valor del campo stock no es válido";
@@ -97,6 +103,7 @@ export default class ProductManager {
         message: MError.PR01,
         errorCode: EError.PRODUCT_ERROR
       });
+      logger.debug(`${MError.PR01} - ${new Date().toLocaleTimeString()}`);
       return "Error en creacion de producto";
     } else {
 
@@ -110,6 +117,7 @@ export default class ProductManager {
             message: MError.PR02,
             errorCode: EError.PRODUCT_ERROR
           });
+          logger.debug(`${MError.PR02} - Código ${code} - ${new Date().toLocaleTimeString()}`);
           return "Error en creacion de producto";
         } else {
           try {
@@ -133,6 +141,7 @@ export default class ProductManager {
               message: MError.DB05,
               errorCode: EError.DB_ERROR
             });
+            logger.error(`${MError.DB05} - ${new Date().toLocaleTimeString()}`);
             return "DB Error en carga de producto";
           }
         }
@@ -144,6 +153,7 @@ export default class ProductManager {
           message: MError.DB05,
           errorCode: EError.DB_ERROR
         });
+        logger.error(`${MError.DB05} - ${new Date().toLocaleTimeString()}`);
         return "DB Error al validar la existencia del código de producto en carga";
       }
     }
@@ -161,6 +171,7 @@ export default class ProductManager {
         message: MError.DB06,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB06} - ${new Date().toLocaleTimeString()}`);
       return "DB Error al actualizar un producto";
     }
   };
@@ -178,6 +189,7 @@ export default class ProductManager {
           message: MError.PR04,
           errorCode: EError.PRODUCT_ERROR
         });
+        logger.debug(`${MError.PR04} - ${productId} - ${new Date().toLocaleTimeString()}`);
         return "Error! ID producto inexistente";
       }
     } catch (e) {
@@ -188,6 +200,7 @@ export default class ProductManager {
         message: MError.DB06,
         errorCode: EError.DB_ERROR
       });
+      logger.error(`${MError.DB06} - ${new Date().toLocaleTimeString()}`);
       return "DB Error al eliminar un producto";
     }
   };

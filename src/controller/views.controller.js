@@ -110,6 +110,12 @@ class ViewsController{
             return e;
         }
     }
+
+    static loggerTest = async (req, res) => {
+        //logger.debug("Nivel debug");
+        const loggerTest = await ViewsService.loggerTest();
+        res.render("logger");
+    }
 }
 
 export { ViewsController }

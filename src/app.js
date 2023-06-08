@@ -25,7 +25,11 @@ const port = config.server.port;
 const database = config.db.mongoUrl;
 const tokenSecret = config.token.secret;
 
-import { errorHandler } from "./dao/error-managers/ErrorManager.js";
+import { errorHandler } from "./utils/errorHandler.js";
+
+import { addLogger, currentEnv } from "./utils/logger.js";
+const logger = addLogger();
+logger.info(`Env: ${currentEnv} - ${new Date().toLocaleTimeString()}`);
 
 const app = express();
 app.use(express.json());
@@ -36,8 +40,6 @@ app.set("views", __dirname+'/views');
 app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/../public"));
 app.use(cookieParser());
-
-
 
 const main = async () => {
   mongoose

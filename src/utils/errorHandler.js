@@ -1,4 +1,4 @@
-import { EError } from "../../service/errors/enums.js";
+import { EError } from "../service/errors/enums.js";
 
 export const errorHandler = (error, req, res, next)=>{
     switch (error.code) {
@@ -18,7 +18,7 @@ export const errorHandler = (error, req, res, next)=>{
             res.json({status:"Error", error:error.cause, message: error.name})
             break;
         default:
-            res.json({status:"Error", message:"Error desconocido"})
+            res.json({status:"Error", error:error.cause, message:`Error desconocido ${error.code}`})
             break;
     }
 }

@@ -5,6 +5,9 @@ import { CustomError } from "../../service/errors/error.service.js";
 import { EError, MError } from "../../service/errors/enums.js";
 import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 
+import { addLogger } from "../../utils/logger.js";
+const logger = addLogger();
+
 export default class TicketManager {
 
   addTicket = async (products, amount, email) => {
@@ -26,6 +29,7 @@ export default class TicketManager {
           message: MError.DB09,
           errorCode: EError.DB_ERROR
         });
+        logger.error(`${MError.DB09} - ${new Date().toLocaleTimeString()}`);
         return "Se produjo un error al generar el ticket";
     }
   };
