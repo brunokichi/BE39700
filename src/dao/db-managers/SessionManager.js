@@ -1,16 +1,17 @@
-import { createHash, isValidPassword } from "../../utils.js";
+import { createHash, isValidPassword, generateEmailToken, verifyEmailToken} from "../../utils.js";
 import userModel from "../models/UserModel.js";
+import { sendRecoveryPass } from "../../utils/email.js";
 
 import { config } from "../../config/config.js";
 const adminUser = config.admin.user;
 const adminSecret = config.admin.secret;
 
-
 import { CustomError } from "../../service/errors/error.service.js";
 import { EError, MError } from "../../service/errors/enums.js";
-import { generateErrorUser } from "../../service/errors/errorUser.js";
-import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 import { generateErrorAuth } from "../../service/errors/errorAuth.js";
+import { generateErrorDB } from "../../service/errors/errorDatabase.js";
+import { generateErrorSys } from "../../service/errors/errorSys.js";
+import { generateErrorUser } from "../../service/errors/errorUser.js";
 
 import { addLogger } from "../../utils/logger.js";
 const logger = addLogger();
@@ -40,11 +41,9 @@ export default class SessionManager {
     email,
     age,
     password,
-    rol = "Usuario"
+    rol
   ) => {
     if (!first_name || !last_name || !email || !age || !password) {
-      //Error! Algún campo está incompleto;
-      //return "1";
       CustomError.createError({
         name:"Error en creacion de usuario",
         cause:generateErrorUser(first_name, last_name, email, age, password),
@@ -57,8 +56,6 @@ export default class SessionManager {
       try {
           const validEmail = await userModel.findOne({ email: email });
           if (validEmail) {
-            //Error! El email ${email} ya se encuentra registrado;
-            //return "97";
             CustomError.createError({
               name:"Error en creacion de usuario",
               cause:generateErrorUser(first_name, last_name, email, age, password),
@@ -77,11 +74,8 @@ export default class SessionManager {
                 password: createHash(password),
                 rol,
               });
-              //Usuario registrado de manera exitosa;
-              return "99";
+              return "OK99";
             } catch (e) {
-              //Se produjo un error al registrar el usuario;
-              //return "98";
               CustomError.createError({
                 name:"DB Error en creacion de usuario",
                 cause:generateErrorDB(MError.DB02),
@@ -93,8 +87,6 @@ export default class SessionManager {
             }
           }
       } catch (e) {
-          //Se produjo un error al validar el email;
-          //return "96";
           CustomError.createError({
             name:"DB Error en creacion de usuario",
             cause:generateErrorDB(MError.DB01),
@@ -114,7 +106,6 @@ export default class SessionManager {
     try {
       const validEmail = await userModel.findOne({ email: email });
       if (!validEmail || validEmail.rol === "Admin") {
-        //return "95";
         CustomError.createError({
           name:"SYS Error en perfil de usuario al asignar carrito",
           cause:generateErrorDB(MError.SYS01),
@@ -126,12 +117,8 @@ export default class SessionManager {
       }
       try {
         const result = await userModel.updateOne({ _id: validEmail._id} ,  {cart: resCart});
-        //return result;
-        //Usuario registrado de manera exitosa;
-        return "99";
+        return "OK99";
       } catch (e) {
-        //Se produjo un error al registrar el usuario;
-        //return "98";
         CustomError.createError({
           name:"DB Error en asignacion de carrito al crear usuario",
           cause:generateErrorDB(MError.DB02),
@@ -142,7 +129,6 @@ export default class SessionManager {
         return "DB02";
       }
     } catch (e) {
-      //return "96";
       CustomError.createError({
         name:"DB Error en asignacion de carrito al crear usuario",
         cause:generateErrorDB(MError.DB01),
@@ -156,8 +142,6 @@ export default class SessionManager {
 
   loginUser = async (user, password) => {
     if (!user || !password) {
-      //Error! Algún campo está incompleto;
-      //return "1";
       CustomError.createError({
         name:"Error en ingreso de usuario",
         cause:generateErrorAuth(user, password),
@@ -168,7 +152,6 @@ export default class SessionManager {
       return "US01";
     } else {
       if (user === adminUser && password === adminSecret) {
-        //Acceso correcto
         logger.info(`Atencion! Ingreso de usuario admin - ${new Date().toLocaleTimeString()}`);
         return {
           email: user,
@@ -180,11 +163,8 @@ export default class SessionManager {
         try {
           const findUser = await userModel.findOne({ email: user });
           if (findUser && isValidPassword(findUser.password, password)) {
-            //Acceso correcto
             return findUser;
           } else {
-            //Error! Usuario y/o contraseña incorrecto;
-            //return "2";
             CustomError.createError({
               name:"Error en validacion al ingreso de usuario",
               cause:generateErrorAuth(user, password),
@@ -195,8 +175,6 @@ export default class SessionManager {
             return "AUTH01";
           }
         } catch (e) {
-          //Se produjo un error al validar el usuario;
-          //return "3";
           CustomError.createError({
             name:"DB Error en busqueda de usuario",
             cause:generateErrorDB(MError.DB03),
@@ -217,5 +195,132 @@ export default class SessionManager {
     logger.info(`Nivel info - ${new Date().toLocaleTimeString()}`);
     logger.http(`Nivel http - ${new Date().toLocaleTimeString()}`);
     logger.debug(`Nivel debug - ${new Date().toLocaleTimeString()}`);
+  }
+
+  forgotPassword = async (user) => {
+    try {
+      const findUser = await userModel.findOne({ email: user });
+      
+      if(!findUser){
+          CustomError.createError({
+            name:"Error en validacion de usuario",
+            cause:generateErrorAuth(user),
+            message: MError.AUTH03,
+            errorCode: EError.AUTH_ERROR
+          });
+          logger.info(`${MError.AUTH03} - ${user} - ${new Date().toLocaleTimeString()}`);
+          return "AUTH03";
+      }
+
+      const token = generateEmailToken(user,3600);
+      try {
+        const send = await sendRecoveryPass(user, token);
+        return ("OK99");
+      } catch (error) {
+        CustomError.createError({
+          name:"Error en envio de email",
+          cause:generateErrorAuth(user),
+          message: MError.SYS02,
+          errorCode: EError.SYS_ERROR
+        });
+        logger.info(`${MError.SYS02} - ${user} - ${new Date().toLocaleTimeString()}`);
+        return "SYS02";
+      }
+    } catch (error) {
+      CustomError.createError({
+        name:"Error en búsqueda de usuario",
+        cause:generateErrorAuth(user),
+        message: MError.DB03,
+        errorCode: EError.AUTH_ERROR
+      });
+      logger.info(`${MError.DB03} - ${user} - ${new Date().toLocaleTimeString()}`);
+      return "DB03";
+    }
+  }
+
+  resetPassword = async (token, user, password) => {
+    try {
+      const validToken = verifyEmailToken(token);
+      console.log(validToken);
+      if(!validToken){
+        CustomError.createError({
+          name:"Token vencido / invalido",
+          cause:generateErrorSys(MError.AUTH04),
+          message: MError.AUTH04,
+          errorCode: EError.AUTH_ERROR
+        });
+        logger.info(`${MError.AUTH04} - ${new Date().toLocaleTimeString()}`);
+        return "AUTH04";
+      }
+      
+      if (!user || !password) {
+        CustomError.createError({
+          name:"Datos incompletos al intentar resetear contraseña",
+          cause:generateErrorAuth(user, password),
+          message: MError.US01,
+          errorCode: EError.AUTH_ERROR
+        });
+        logger.debug(`${MError.US01} - ${new Date().toLocaleTimeString()}`);
+        return "US01";
+      } 
+
+      try {
+        const findUser = await userModel.findOne({ email: user });
+        console.log(findUser);
+        if(!findUser){
+            CustomError.createError({
+              name:"Error en validacion de usuario",
+              cause:generateErrorAuth(user),
+              message: MError.AUTH03,
+              errorCode: EError.AUTH_ERROR
+            });
+            logger.info(`${MError.AUTH03} - ${user} - ${new Date().toLocaleTimeString()}`);
+            return "AUTH03";
+        }
+
+        if (!isValidPassword(findUser.password, password)) {
+          try {
+            const result = await userModel.updateOne({ _id: findUser._id }  ,  { password: createHash(password)} );
+            return "OK98";
+          } catch (error) {
+            CustomError.createError({
+              name:"DB Error en busqueda de usuario",
+              cause:generateErrorDB(MError.DB03),
+              message: MError.DB03,
+              errorCode: EError.DB_ERROR
+            });
+            logger.error(`${EError.DB_ERROR} - ${error.message} - ${new Date().toLocaleTimeString()}`);
+            return "DB03";
+          }
+        } else {
+          CustomError.createError({
+            name:"La contraseña ya fue utilizada",
+            cause:generateErrorSys(MError.US03),
+            message: MError.US03,
+            errorCode: EError.AUTH_ERROR
+          });
+          logger.debug(`${MError.US03} - ${new Date().toLocaleTimeString()}`);
+          return "US03";
+        }
+      } catch (error) {
+        CustomError.createError({
+          name:"DB Error en busqueda de usuario",
+          cause:generateErrorDB(MError.DB03),
+          message: MError.DB03,
+          errorCode: EError.DB_ERROR
+        });
+        logger.error(`${EError.DB_ERROR} - ${error.message} - ${new Date().toLocaleTimeString()}`);
+        return "DB03";
+      }
+    } catch (error) {
+      CustomError.createError({
+        name:"Error en validación de Token",
+        cause:generateErrorSys(user),
+        message: MError.SYS03,
+        errorCode: EError.AUTH_ERROR
+      });
+      logger.info(`${MError.SYS03} - ${user} - ${new Date().toLocaleTimeString()}`);
+      return "SYS03";
+    }
   }
 }

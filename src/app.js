@@ -6,6 +6,7 @@ import cartsRouter from "./routes/carts.router.js";
 import chatsRouter from "./routes/chats.router.js";
 import sessionsRouter from "./routes/sessions.router.js";
 import viewsRouter from "./routes/views.router.js";
+import usersRouter from "./routes/users.router.js";
 import __dirname from "./utils.js";
 
 import { Server } from "socket.io";
@@ -121,5 +122,6 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/chat", chatsRouter);
 app.use("/api/sessions", sessionsRouter);
+app.use("/api/users", usersRouter);
 
 app.use(errorHandler);

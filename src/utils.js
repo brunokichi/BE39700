@@ -1,12 +1,11 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
-//import { faker } from '@faker-js/faker'
 import { fakerES as faker } from '@faker-js/faker'
 
 import { config } from "./config/config.js";
 const tokenSecret = config.token.secret;
-//import { log } from "console";
+import jwt from "jsonwebtoken";
 
 // Debemos crear nuestra propia variable __dirname a través de este método si usamos ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -48,5 +47,26 @@ export const generateProduct = ()=>{
       status: faker.datatype.boolean(),
   }
 }
+
+export const generateEmailToken = (user,expireTime)=>{
+  const token = jwt.sign(
+      {
+       email: user
+      },
+      tokenSecret,
+      { expiresIn: expireTime }
+    );
+  return token;
+};
+
+export const verifyEmailToken = (token)=>{
+  try {
+      const info = jwt.verify(token,tokenSecret);
+      return info.email;
+  } catch (error) {
+      //console.log(error.message);
+      return null;
+  }
+};
 
 export default __dirname;

@@ -24,8 +24,9 @@ class ProductController{
 
     static addProduct = async (req,res)=>{
         const { title, description, code, price, status, stock, category, thumbnail } = req.body;
+        const owner = req.user._id;
         try {
-            const newProduct = await ProductService.addProduct(title, description, code, +price, status, +stock, category, thumbnail);
+            const newProduct = await ProductService.addProduct(title, description, code, +price, status, +stock, category, thumbnail, owner);
             try {
                 const products = await ProductService.getProducts();
                 req.socketServer.emit("products", products.docs);
@@ -51,8 +52,10 @@ class ProductController{
 
     static deleteProduct = async (req,res)=>{
         const pid = req.params.pid;
+        const userId = JSON.parse(JSON.stringify(req.user._id));
+        const userRol = JSON.parse(JSON.stringify(req.user.rol));
     try {
-        const delProduct = await ProductService.deleteProduct(pid);
+        const delProduct = await ProductService.deleteProduct(pid, userId, userRol);
         res.json(delProduct);
     } catch (e) {
         return "Se produjo un error al eliminar el producto";

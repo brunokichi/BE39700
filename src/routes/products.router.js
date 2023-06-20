@@ -8,8 +8,8 @@ productsRouter.use(urlencoded({ extended: true }));
 
 productsRouter.get("/", ProductController.getProducts);
 productsRouter.get("/:pid", ProductController.getProductsById);
-productsRouter.post("/", SessionController.loginController, SessionController.checkRol(["Admin"]), ProductController.addProduct);
+productsRouter.post("/", SessionController.loginController, SessionController.checkRol(["Admin","Premium"]), ProductController.addProduct);
 productsRouter.put("/:pid", SessionController.loginController, SessionController.checkRol(["Admin"]), ProductController.updateProduct);
-productsRouter.delete("/:pid", SessionController.loginController, SessionController.checkRol(["Admin"]), ProductController.deleteProduct);
+productsRouter.delete("/:pid", SessionController.loginController, SessionController.checkRol(["Admin","Premium"]), ProductController.deleteProduct);
 
 export default productsRouter;

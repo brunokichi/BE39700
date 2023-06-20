@@ -7,16 +7,18 @@
   </div>
   <div style="margin-top:2%">
     <form method="post" action="/api/sessions/login">
-    <label for="user">Ingrese su usuario</label>
-      <input type="text" id="user" name="user" />
-    </br>
-    <label for="password">Ingrese su contraseña</label>
-      <input type="password" id="password" name="password" style="margin-top:1%"/>
-    </br>
-    {{mensajeResultado}}
-    </br>
-    <button type="submit" style="margin-top:1%"> Enviar </button>
+      <label for="user">Ingrese su usuario</label>
+        <input type="text" id="user" name="user" />
+      </br>
+      <label for="password">Ingrese su contraseña</label>
+        <input type="password" id="password" name="password" style="margin-top:1%"/>
+      </br>
+      {{mensajeResultado}}
+      </br>
+      <a href="/forgotpassword"><button type="button" id="forgotpassword" style="margin-right:3%"> Restablecer contraseña </button></a>
+      <button type="submit" style="margin-top:1%"> Enviar</button>
     </form>
+   
   </div>
   
 </div>

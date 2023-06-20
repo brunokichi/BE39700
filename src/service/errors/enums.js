@@ -9,10 +9,14 @@ export const EError = {
 export const MError = {
     US01: "Error! Algún campo está incompleto", //1
     US02: "Error! El email ya se encuentra registrado", //97
-    //US03: "Error! No se pudo validar el usuario", //3
+    US03: "Error! La contraseña ya fue utilizada anteriormente", //3
+    US04: "Error! Perfil de usuario incorrecto / inexistente",
     //
     AUTH01: "Error! Usuario y/o contraseña incorrecto", //2
     AUTH02: "Error! Acceso no autorizado", //4
+    AUTH03: "Error! Usuario incorrecto", //5
+    AUTH04: "Error! Token inválido / vencido",
+    AUTH05: "Error! Producto no habilitado para el usuario",
     //
     DB01: "Error! No se pudo validar el email al crear el usuario", //96
     DB02: "Error! No se pudo registrar al usuario", //98
@@ -30,4 +34,7 @@ export const MError = {
     PR04: "Error! ID de producto inexistente",
     //
     SYS01: "Error! No se pudo crearle un carrito al usuario", //95
+    SYS02: "Error! No se pudo enviar el mail de recupero de contraseña",
+    SYS03: "Error! No se pudo validar el Token",
+    SYS04: "Error! No se pudo actualizar el rol de usuario",
 }

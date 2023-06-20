@@ -72,7 +72,8 @@ export default class ProductManager {
     status,
     stock,
     category,
-    thumbnail
+    thumbnail, 
+    owner
   ) => {
     
     if (!title || !description || !code || !price || !stock || !category) {
@@ -130,6 +131,7 @@ export default class ProductManager {
               stock,
               category,
               thumbnail,
+              owner
             });
             return "Producto cargado";
           } catch (e) {
@@ -176,13 +178,35 @@ export default class ProductManager {
     }
   };
   
-  deleteProduct = async (productId) => {
+  deleteProduct = async (productId, userId, userRol) => {
     try {
-      const result = await productModel.deleteOne({ _id: productId });
-      if(result.deletedCount > 0) {
-        return `Producto ID ${productId} eliminado`;
+      const product = await productModel.findById(productId);
+      if(product){
+        if (userRol === "Admin" || ( userRol === "Premium" && userId == product.owner )) {
+          try {
+            const result = await productModel.deleteOne({ _id: productId });
+            return `Producto ID ${productId} eliminado`;
+          } catch (error) {
+            CustomError.createError({
+              name:"DB Error al eliminar un producto",
+              cause:generateErrorDB(MError.DB06),
+              message: MError.DB06,
+              errorCode: EError.DB_ERROR
+            });
+            logger.error(`${MError.DB06} - ${error.message} - ${new Date().toLocaleTimeString()}`);
+            return "DB Error al eliminar un producto";
+          }
+        } else {
+          CustomError.createError({
+            name:"Perfil de usuario inadecuado",
+            cause:generateErrorSys(MError.US04),
+            message: MError.US04,
+            errorCode: EError.AUTH_ERROR
+          });
+          logger.debug(`${MError.US04} - ${new Date().toLocaleTimeString()}`);
+          return "Perfil de usuario inadecuado";
+        }
       } else {
-        //return `Producto ID ${productId} inexistente`;
         CustomError.createError({
           name:"Error! ID producto inexistente",
           cause:generateErrorProduct('simple', MError.PR04, '', '', '' , '', '', '', productId),
@@ -200,7 +224,7 @@ export default class ProductManager {
         message: MError.DB06,
         errorCode: EError.DB_ERROR
       });
-      logger.error(`${MError.DB06} - ${new Date().toLocaleTimeString()}`);
+      logger.error(`${MError.DB06} - ${e.message} - ${new Date().toLocaleTimeString()}`);
       return "DB Error al eliminar un producto";
     }
   };

@@ -15,6 +15,9 @@ router.get("/current", SessionController.loginController, ViewsController.profil
 router.get("/login", ViewsController.login);
 router.get("/logout", ViewsController.logout);
 router.get("/register", ViewsController.register);
+router.get("/forgotpassword", ViewsController.forgotpassword);
+router.get("/resetpassword", ViewsController.resetpassword);
+router.get("/changerol", ViewsController.changerol);
 //router.get("/profile", passport.authenticate("loginJWT" , {session:false, failureRedirect: '/login?result=4'}), ViewsController.profileUser);
 //router.get("/products", passport.authenticate("loginJWT" , {session:false, failureRedirect: '/login?result=4'}), ViewsController.getProducts);
 router.get("/profile", SessionController.loginController, ViewsController.profileUser);

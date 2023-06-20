@@ -31,8 +31,10 @@ class CartController{
 
     static addProductToCart = async (req,res)=>{
         try {
-            const product = await CartService.addProductToCart(req.params.cid, req.params.pid);
-            res.send(product);
+            const userId = JSON.parse(JSON.stringify(req.user._id));
+            const product = await CartService.addProductToCart(req.params.cid, req.params.pid, userId);
+            //res.send(product);
+            res.redirect('/products?result=' + product);
         } catch (e) {
             return e;
         }

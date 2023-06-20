@@ -29,7 +29,7 @@ class SessionController{
 
     static checkRol = (roles)=>{
         return (req,res,next)=>{
-            console.log(req.user);
+            //console.log(req.user);
             if(!roles.includes(req.user.rol)){
                 return res.clearCookie(tokenCookie).redirect("/login?result=4");
             }
@@ -42,7 +42,7 @@ class SessionController{
         try {
             const resUser = await SessionService.addUser(first_name, last_name, email, age, password);
             console.log(resUser);
-            if (resUser =='99') {
+            if (resUser =='OK99') {
                 const resCart = await CartController.addCart();
                 const resUserCart = await SessionService.addUserCart(email,resCart);
                 res.redirect('/login?result=' + resUserCart);
@@ -74,6 +74,24 @@ class SessionController{
         }
     };
 
+    static forgotPassword = async (req,res)=>{
+        const { user } = req.body;
+        const resForgotPassword = await SessionService.forgotPassword(user);
+        res.redirect('/forgotpassword?result=' + resForgotPassword);
+    };
+
+    static resetPassword = async (req,res)=>{
+        const token = req.query.token;
+        const { user, password } = req.body;
+        const resResetPassword = await SessionService.resetPassword(token, user, password);
+        if (resResetPassword == "OK98"){
+            res.redirect('/login?result=' + resResetPassword);
+        }
+        else {
+            res.redirect('/resetpassword?user=' + user + '&token=' + token + '&result=' + resResetPassword);
+        }
+    };
+
     static currentUser = (req,res)=>{
         if(req.user){
             return res.send({userInfo: req.user});
@@ -90,7 +108,7 @@ class SessionController{
     }
 
     static registerSession = async (req, res) => {
-        const resUser = "99";
+        const resUser = "OK99";
         res.redirect('/login?result=' + resUser);
     };
 

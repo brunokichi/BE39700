@@ -18,7 +18,15 @@ class SessionService{
         return resLogin;
     }
 
-    
+    static forgotPassword = (user)=>{
+        const resForgot =  manager.forgotPassword(user);
+        return resForgot;
+    }
+
+    static resetPassword = (token, user, password)=>{
+        const resReset =  manager.resetPassword(token, user, password);
+        return resReset;
+    }
 }
 
 export { SessionService }

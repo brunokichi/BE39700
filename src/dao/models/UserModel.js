@@ -29,7 +29,9 @@ const usersSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    required: false,
+    required: true,
+    enum:["Usuario","Admin","Premium"],
+    default:"Usuario",
   },
 });
 

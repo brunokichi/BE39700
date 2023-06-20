@@ -13,8 +13,8 @@ class ProductService{
         return product;
     }
 
-    static addProduct = (title, description, code, price, status, stock, category, thumbnail)=>{
-        const newProduct =  manager.addProduct(title, description, code, price, status, stock, category, thumbnail);
+    static addProduct = (title, description, code, price, status, stock, category, thumbnail, owner)=>{
+        const newProduct =  manager.addProduct(title, description, code, price, status, stock, category, thumbnail, owner);
         return newProduct;
     }
 
@@ -23,8 +23,8 @@ class ProductService{
         return updProduct;
     }
 
-    static deleteProduct = (pid)=>{
-        const delProduct =  manager.deleteProduct(pid);
+    static deleteProduct = (pid, userId, userRol)=>{
+        const delProduct =  manager.deleteProduct(pid, userId, userRol);
         return delProduct;
     }
 }

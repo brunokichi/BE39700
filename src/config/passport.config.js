@@ -51,7 +51,7 @@ const initializePassport = ()=>{
                       rol,
                     });
                     //Usuario registrado de manera exitosa;
-                    //return "99";
+                    //return "OK99";
                     return done(null, newUser);
                   } catch (e) {
                     //Se produjo un error al registrar el usuario;
@@ -131,7 +131,7 @@ const initializePassport = ()=>{
               rol: "Usuario Github"
             });
             //Usuario registrado de manera exitosa;
-            //return "99";
+            //return "OK99";
             return done(null, newUser);
           } catch (e) {
             //Se produjo un error al registrar el usuario;

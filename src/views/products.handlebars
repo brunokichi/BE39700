@@ -4,12 +4,20 @@
     <a href="/profile"><button type="button" id="profile" style="margin-left:1%"> Mi perfil </button></a>
     <a href="/logout"><button type="button" id="logout" style="margin-left:1%"> Cerrar sesión </button></a>
   </div><br />
-  <form action="/api/carts/{{cart}}/purchase" method="post">
-    <input type="submit" value="Realizar compra"/>
-  </form>
+    {{#if cart }}
+      <form action="/api/carts/{{cart}}/purchase" method="post">
+        <input type="submit" value="Realizar compra"/>
+      </form>
+    {{/if}}
+  
+  {{#unless cart}}
+    <a href="/changerol"><button type="button" id="changerol" style="margin-left:1%"> Modificar roles de usuario </button></a>
+  {{/unless}}
+
   <h1>Lista de productos</h1>
   
-
+  <h3 style="color: red"> {{mensajeResultado}} </h3>
+  
   {{#each products.docs}}
     
     <p>

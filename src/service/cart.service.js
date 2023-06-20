@@ -19,8 +19,8 @@ class CartService{
         return newCart;
     }
 
-    static addProductToCart = (cid, pid)=>{
-        const product =  manager.addProductToCart(cid, pid);
+    static addProductToCart = (cid, pid, userId)=>{
+        const product =  manager.addProductToCart(cid, pid, userId);
         return product;
     }
 

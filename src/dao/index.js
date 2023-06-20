@@ -5,12 +5,13 @@ import DbCartManager from "./db-managers/CartManager.js";
 import DbChatManager from "./db-managers/ChatManager.js";
 import DbSessionManager from "./db-managers/SessionManager.js";
 import DBTicketManager from "./db-managers/TicketManager.js";
+import DBUserManager from "./db-managers/UserManager.js";
 
 const config = {
   persistenceType: "db",
 };
 
-let ProductManager, CartManager, ChatManager, SessionManager, TicketManager;
+let ProductManager, CartManager, ChatManager, SessionManager, TicketManager, UserManager;
 
 if (config.persistenceType === "db") {
   ProductManager = DbProductManager;
@@ -25,5 +26,6 @@ if (config.persistenceType === "db") {
 ChatManager = DbChatManager;
 SessionManager = DbSessionManager;
 TicketManager = DBTicketManager;
+UserManager = DBUserManager;
 
-export { ProductManager, CartManager, ChatManager, SessionManager, TicketManager };
+export { ProductManager, CartManager, ChatManager, SessionManager, TicketManager, UserManager };

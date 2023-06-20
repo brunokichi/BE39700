@@ -26,8 +26,10 @@ class ViewsController{
             const { result } = req.query;
             let mensajeResultado = "";
             if (result) {
-                if (result == "99") {
+                if (result == "OK99") {
                     mensajeResultado = "Usuario generado de manera exitosa, intente loguearse por favor";
+                } else if (result == "OK98") {
+                    mensajeResultado = "Contraseña actualizada correctamente, intente loguearse por favor";
                 } else {
                     mensajeResultado = MError[result];
                 }
@@ -57,6 +59,42 @@ class ViewsController{
         }
     }
 
+    static forgotpassword = async (req, res) => {
+        const { result } = req.query;
+        let mensajeResultado = "";
+        if (result) {
+            if (result == "OK99") {
+                mensajeResultado = "Revise su correo, se envió un mail a su cuenta para continuar con el reinicio de la contraseña";
+            } else {
+                mensajeResultado = MError[result];
+            }
+        }
+        res.render("forgotpassword", { mensajeResultado });
+    }
+
+    static resetpassword = async (req, res) => {
+        const { user, token, result } = req.query;
+        let mensajeResultado = "";
+        if (result) {
+            mensajeResultado = MError[result];
+        }
+        res.render("resetpassword", { user, token, mensajeResultado });
+    }
+
+    static changerol = async (req, res) => {
+        const { result } = req.query;
+        let mensajeResultado = "";
+        if (result) {
+            if (MError[result]) {
+                mensajeResultado = MError[result];
+            } else {
+                mensajeResultado = 'Rol modificado a ' + result;
+            }
+            
+        }
+        res.render("changerol", { mensajeResultado });
+    }
+
     static profileUser = async (req, res) =>{
         try {
             const { first_name, last_name, email, age, rol, cart } = await ViewsService.profileUser(req.user._id);
@@ -67,12 +105,20 @@ class ViewsController{
     }
 
     static getProducts = async (req, res) =>{
-        const { limit, page, sort, title, stock } = req.query;
+        const { limit, page, sort, title, stock, result } = req.query;
+        let mensajeResultado = "";
         try {
+            if (result) {
+                if (result == "OK99") {
+                    mensajeResultado = "Producto cargado de manera exitosa";
+                } else {
+                    mensajeResultado = MError[result];
+                }
+            }
             const { email, rol, cart } = req.user;
             const products = await ViewsService.getProducts(limit, page, sort, title, stock);
             res.render("products", {
-                products, email, rol, cart
+                products, email, rol, cart, mensajeResultado
             });
         } catch (e) {
             return e;

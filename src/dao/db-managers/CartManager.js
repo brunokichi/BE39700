@@ -6,9 +6,12 @@ import { CustomError } from "../../service/errors/error.service.js";
 import { EError, MError } from "../../service/errors/enums.js";
 import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 import { generateErrorProduct } from "../../service/errors/errorProduct.js";
+import { generateErrorSys } from "../../service/errors/errorSys.js";
 
 import { addLogger } from "../../utils/logger.js";
 const logger = addLogger();
+
+import { sendTicket } from "../../utils/email.js";
 
 export default class CartManager {
 
@@ -28,7 +31,7 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.erro(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar los carritos";
+      return "DB07";
     }
   };
 
@@ -48,7 +51,7 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.erro(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar el/los carritos";
+      return "DB07";
     }
   };
 
@@ -65,26 +68,38 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.erro(`${MError.DB08} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al crear el carrito";
+      return "DB08";
       
     }
   };
 
-  addProductToCart = async (cid, pid) => {
+  addProductToCart = async (cid, pid, userId) => {
     try {
       const cart = await cartModel.findById(cid).populate("products.product");
 
       try {
-        await productModel.findById(pid);
-
-        const product = cart.products.filter((el) => el.product.id == pid);
-        if (product.length > 0) {
-          const productIndex = cart.products.findIndex((el) => el.product.id == pid);
-          cart.products[productIndex].quantity++;
-          return cart.save();
+        const productAvail = await productModel.findById(pid);
+        if (userId == productAvail.owner) {
+          CustomError.createError({
+            name:"Producto no habilitado para el usuario",
+            cause:generateErrorSys(MError.US04),
+            message: MError.AUTH05,
+            errorCode: EError.AUTH_ERROR
+          });
+          logger.debug(`${MError.AUTH05} - ${new Date().toLocaleTimeString()}`);
+          return "AUTH05";
         } else {
-          cart.products.push({ product: pid, quantity: 1 });
-          return cart.save();
+          const product = cart.products.filter((el) => el.product.id == pid);
+          if (product.length > 0) {
+            const productIndex = cart.products.findIndex((el) => el.product.id == pid);
+            cart.products[productIndex].quantity++;
+            cart.save();
+            return "OK99";
+          } else {
+            cart.products.push({ product: pid, quantity: 1 });
+            cart.save();
+            return "OK99";
+          }
         }
       } catch (e) {
         //return "ID de producto inexistente";
@@ -95,7 +110,7 @@ export default class CartManager {
           errorCode: EError.PRODUCT_ERROR
         });
         logger.info(`${MError.PR04} - ${pid} -  ${new Date().toLocaleTimeString()}`);
-        return "Error! ID producto inexistente";
+        return "PR04";
       }
     } catch (e) {
       //return "Carrito no encontrado";
@@ -106,7 +121,7 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar el/los carritos";
+      return "DB07";
     }
   };
 
@@ -123,7 +138,7 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar el/los carritos";
+      return "DB07";
     }
   };
 
@@ -136,8 +151,8 @@ export default class CartManager {
       if (product.length > 0) {
         const productIndex = cart.products.findIndex((el) => el.product._id == pid);
         cart.products[productIndex].quantity = quantity;
-        return cart.save();
-
+        cart.save();
+        return "OK99";
       } else {
         //return "Producto no encontrado en el carrito";
         CustomError.createError({
@@ -147,7 +162,7 @@ export default class CartManager {
           errorCode: EError.PRODUCT_ERROR
         });
         logger.info(`${MError.PR04} - ${new Date().toLocaleTimeString()}`);
-        return "Error! ID producto inexistente";
+        return "PR04";
       }
     } catch (e) {
       //return "Carrito no encontrado";
@@ -158,7 +173,7 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar el/los carritos";
+      return "DB07";
     }
   };
 
@@ -237,6 +252,7 @@ export default class CartManager {
             const tktManager = new TicketManager();
             try {
                   const ticket = await tktManager.addTicket(ticketProducts, amount, user.email);
+                  const send = await sendTicket(ticketProducts, amount, user.email);
                   try {
                       const newCart = await this.putProductsToCart(cid, rejectProducts);
                       return `<b>Ticket generado de la siguiente manera</b> <br/>

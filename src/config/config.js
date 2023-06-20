@@ -11,6 +11,10 @@ const TOKEN_COOKIE = process.env.TOKEN_COOKIE;
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_SECRET = process.env.ADMIN_SECRET;
 const NODE_ENV = process.env.NODE_ENV;
+const EMAIL_SERVICE = process.env.EMAIL_SERVICE;
+const EMAIL_PORT = process.env.EMAIL_PORT;
+const EMAIL_ADMIN = process.env.EMAIL_ADMIN;
+const EMAIL_SECRET = process.env.EMAIL_SECRET;
 
 export const config = {
     db:{
@@ -29,5 +33,12 @@ export const config = {
     },
     logger:{
         node_env:NODE_ENV,
+    },
+    email:{
+        email_service:EMAIL_SERVICE,
+        email_port:EMAIL_PORT,
+        email_admin:EMAIL_ADMIN,
+        email_secret:EMAIL_SECRET,
     }
+
 }
