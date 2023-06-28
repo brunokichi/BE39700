@@ -1,0 +1,186 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Productos
+      responses:
+        "200":
+          description: Se devolvieron todos los productos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Products'
+        "500":
+          description: Error interno del servidor
+    post:
+      summary: Cargar nuevo producto
+      tags:
+        - Productos
+      parameters:
+        - name: user._id
+          in: header
+          required: true
+          description: Es el ID de usuario que se guardará como propietario del producto
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/dataProduct'
+      responses:
+        "200":
+          description: Se actualizó el producto correctamente
+        "500":
+          description: Error interno del servidor
+  /api/products/{pid}:
+    get:
+      summary: Obtener un producto mediante el PID
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: query
+          required: true
+          description: PID es el id del producto que desea obtener
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se devolvió el producto correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Products'
+        "500":
+          description: Error interno del servidor
+    delete:
+      summary: Eliminar un producto mediante el PID
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: PID es el id del producto que desea eliminar
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se eliminó el producto correctamente
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Actualizar el producto mediante el PID
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: PID es el id del producto que desea actualizar
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/dataProduct'
+      responses:
+        "200":
+          description: Se actualizó el producto correctamente
+        "500":
+          description: Error interno del servidor
+
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID del producto generado de manera automática por la base de datos
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnail:
+          type: Array
+          description: Array con nombre de las imágenes en miniatura del producto
+        code:
+          type: string
+          description: Código del producto
+        stock:
+          type: number
+          description: Cantidad de unidades en stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        owner: 
+          type: ObjectId
+          description: ID del usuario propietario del producto
+      example:
+        _id: ObjectId('641e11675589368985a6228c')
+        title: Titulo1
+        description: Descripcion 1
+        price: 355
+        thumbnail:
+          0: Sedanes
+          1: Audi
+        code: 123
+        stock: 0
+        category: autos
+        status: true
+        owner: ObjectId('6473e40d1447651275e67816')
+  requestBodies:
+    dataProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnail:
+          type: Array
+          description: Array con nombre de las imágenes en miniatura del producto
+        code:
+          type: string
+          description: Código del producto
+        stock:
+          type: number
+          description: Cantidad de unidades en stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+        status:
+          type: boolean
+          description: Estado del producto
+      example:
+        title: Titulo1
+        description: Descripcion 1
+        price: 355
+        thumbnail:
+          0: Sedanes
+          1: Audi
+        code: 123
+        stock: 0
+        category: autos
+        status: true

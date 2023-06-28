@@ -1,0 +1,274 @@
+paths:
+  /api/carts/:
+    get:
+      summary: Obtener todos los carritos
+      tags:
+        - Carritos
+      responses:
+        "200":
+          description: Se devolvieron todos los carritos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Carts'
+        "500":
+          description: Error interno del servidor
+    post:
+      summary: Generar nuevo carrito
+      tags:
+        - Carritos
+      responses:
+        "200":
+          description: Se generó el carrito
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 649b8634ae4c0325324aa674
+        "500":
+          description: Error interno del servidor
+  /api/carts/{cid}:
+    get:
+      summary: Obtener el contenido de un carrito mediante el CID
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: query
+          required: true
+          description: CID es el id del carrito que se desea obtener
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se devolvió el carrito correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Carts'
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Agregar productos al carrito al CID
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: CID es el id del carrito que desea actualizar
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/putProductsToCart'
+      responses:
+        "200":
+          description: Se actualizó el carrito correctamente
+        "500":
+          description: Error interno del servidor
+    delete:
+      summary: Vaciar un carrito
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: CID es el id del carrito que desea vaciar
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Carrito vaciado exitosamente
+        "500":
+          description: Error interno del servidor
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Agregar un producto a un carrito
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: query
+          required: true
+          description: CID es el id del carrito
+          schema:
+            $type: string
+        - name: pid
+          in: query
+          required: true
+          description: PID es el id del producto a agregar
+          schema:
+            $type: string
+        - name: user._id
+          in: header
+          required: true
+          description: Es el ID del usuario que realiza la compra
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se cargó el producto correctamente
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Producto cargado de manera exitosa
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Actualizar cantidad de un producto en el carrito
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: CID es el id del carrito que desea actualizar
+          schema:
+            $type: string
+        - name: pid
+          in: query
+          required: true
+          description: PID es el id del producto a agregar unidades
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updProductFromCart'
+      responses:
+        "200":
+          description: Se actualizó el carrito correctamente
+        "500":
+          description: Error interno del servidor
+    delete:
+      summary: Eliminar un producto del carrito
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: CID es el id del carrito que desea actualizar
+          schema:
+            $type: string
+        - name: pid
+          in: query
+          required: true
+          description: PID es el id del producto a eliminar
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se eliminó el producto correctamente
+        "500":
+          description: Error interno del servidor
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Finalizar la compra
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: query
+          required: true
+          description: CID es el id del carrito
+          schema:
+            $type: string
+        - name: user._id
+          in: header
+          required: true
+          description: Es el ID del usuario que realiza la compra
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Compra realizada de manera exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Tickets'
+        "500":
+          description: Error interno del servidor
+components:
+  schemas:
+    Carts:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID del carrito generado de manera automática por la base de datos
+        products:
+          type: Array
+          description: Array de productos cargados y su cantidad
+      example:
+        _id: ObjectId('641e11675589368985a6228c')
+        products:
+          0: 
+            product: ObjectId('121e1167558936898')
+            quantity: 2
+          1:
+            product: ObjectId('641e116755893689435')
+            quantity: 1
+    Tickets:
+      type: object
+      properties:
+        code:
+          type: String
+          description: Código de compra
+        purchase_datetime:
+          type: String
+          description: Fecha y hora de compra
+        products:
+          type: Array
+          description: Array de productos adquiridos y su cantidad
+        amount:
+          type: String
+          description: Monto de compra  
+        purchaser:
+          type: String
+          description: Email del comprador
+      example:
+        _id: 41399aae-35dc-46de-8226-6d7d148cb8a6
+        purchase_datetime: 2023-06-28T01.18.41.539Z
+        products:
+          0: 
+            product: ObjectId('641e11675589368985a6228d')
+            quantity: 2
+          1:
+            product: ObjectId('641e11675589368985a6234a')
+            quantity: 1
+        amount: 335
+        purchaser: bruno@coderhouse.com
+  requestBodies:
+    putProductsToCart:
+      type: object
+      properties:
+        products:
+          type: Array
+          description: Array de productos y cantidades a agregar
+      example:
+        products:
+          0: 
+            product: ObjectId('641e11675589368985a6228d')
+            quantity: 2
+          1:
+            product: ObjectId('641e11675589368985a6234a')
+            quantity: 1
+    updProductFromCart:
+      type: object
+      properties:
+        products:
+          type: String
+          description: Cantidad de unidades a agregar
+      example:
+        Quantity: 5
