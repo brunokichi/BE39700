@@ -13,6 +13,7 @@ class SessionController{
     static loginController = (req, res, next) => {
         passport.authenticate("loginJWT",{session:false}, 
             (err, user, info) => {
+                
                 if (err) return next(err);
                 req.user = user;
                 if (!user) {
@@ -29,7 +30,6 @@ class SessionController{
 
     static checkRol = (roles)=>{
         return (req,res,next)=>{
-            //console.log(req.user);
             if(!roles.includes(req.user.rol)){
                 return res.clearCookie(tokenCookie).redirect("/login?result=4");
             }

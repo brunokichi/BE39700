@@ -58,7 +58,7 @@ export default class SessionManager {
           if (validEmail) {
             CustomError.createError({
               name:"Error en creacion de usuario",
-              cause:generateErrorUser(first_name, last_name, email, age, password),
+              cause:generateErrorSys(MError.US02),
               message: MError.US02,
               errorCode: EError.USU_ERROR
             });
