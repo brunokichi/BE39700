@@ -11,6 +11,7 @@ export const MError = {
     US02: "Error! El email ya se encuentra registrado", //97
     US03: "Error! La contraseña ya fue utilizada anteriormente", //3
     US04: "Error! Perfil de usuario incorrecto / inexistente",
+    US05: "Error! Documentacion de usuario incompleta",
     //
     AUTH01: "Error! Usuario y/o contraseña incorrecto", //2
     AUTH02: "Error! Acceso no autorizado", //4

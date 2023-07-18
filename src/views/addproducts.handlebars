@@ -6,7 +6,7 @@
     <a href="/register"><button type="button" id="register" style="margin-right:2%"> Registrate </button></a>
   </div>
   <div style="margin-top:2%">
-    <form method="post" action="/api/products">
+    <form method="post" enctype="multipart/form-data" action="/api/products">
     <label for="title">Titulo</label>
       <input type="text" id="title" name="title" value="titulo100"/>
     </br>
@@ -30,6 +30,9 @@
     </br>
     <label for="thumbnail">Miniatura</label>
       <input type="text" id="thumbnail" name="thumbnail" value="sedan,audi"/>
+    </br>
+    <label for="image">Imagen</label>
+      <input type="file" id="image" name="image"/>
     </br>
     {{mensajeResultado}}
     </br>

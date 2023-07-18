@@ -23,7 +23,7 @@ import cookieParser from "cookie-parser";
 
 import { config } from "./config/config.js";
 const port = config.server.port;
-const database = config.db.mongoUrlTest;
+const database = config.db.mongoUrl;
 const tokenSecret = config.token.secret;
 
 import { errorHandler } from "./utils/errorHandler.js";

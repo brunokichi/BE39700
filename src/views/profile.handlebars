@@ -25,6 +25,25 @@
       <input type="text" id="cart" name="cart" style="margin-top:1%; width: 200px" value="{{cart}}" disabled/>
     </br>
     
+    <form enctype="multipart/form-data" method="post" action="/api/users/{{_id}}/avatar" style="margin-top:1%, margin-bottom:1%">
+      Avatar</br>
+      <input type="file" id="avatar" name="avatar"/></br>
+      <button type="submit"> Enviar </button>
+    </form>
+    <p>
+      Documentación
+      <form enctype="multipart/form-data" method="post" action="/api/users/{{_id}}/documents">
+        Identificacion</br>
+        <input type="file" id="identification" name="identification"/></br>
+        Comprobante de domicilio</br>
+        <input type="file" id="address" name="address"/></br>
+        Comprobante estado de cuenta</br>
+        <input type="file" id="account" name="account"/></br>
+        <button type="submit"> Enviar </button>
+      </form>
+    </p>
+    {{mensajeResultado}}
+    
   </div>
   
 </div>

@@ -163,6 +163,8 @@ export default class SessionManager {
         try {
           const findUser = await userModel.findOne({ email: user });
           if (findUser && isValidPassword(findUser.password, password)) {
+            findUser.last_connection = new Date();
+            const userUpdated = await userModel.findByIdAndUpdate(findUser._id, findUser);
             return findUser;
           } else {
             CustomError.createError({
@@ -187,6 +189,11 @@ export default class SessionManager {
       }
     }
   };
+
+  logoutUser = async (id) => {
+    const logoutUser = await userModel.findByIdAndUpdate( id, { last_connection: new Date()});
+    return logoutUser;
+  }
 
   getLoggerTest = async () => {
     logger.fatal(`Nivel fatal - ${new Date().toLocaleTimeString()}`);

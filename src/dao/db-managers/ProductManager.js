@@ -73,6 +73,7 @@ export default class ProductManager {
     stock,
     category,
     thumbnail, 
+    image,
     owner
   ) => {
     
@@ -131,6 +132,7 @@ export default class ProductManager {
               stock,
               category,
               thumbnail,
+              image, 
               owner
             });
             return "Producto cargado";

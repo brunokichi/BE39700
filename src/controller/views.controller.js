@@ -41,10 +41,12 @@ class ViewsController{
     }
 
     static logout = async (req, res) => {
-        req.logout((err)=>{
+        const { _id } = req.user;
+        req.logout(async (err)=>{
             if (err) {
                 return res.status(500).send({ status: "error", data: err});
             }
+            const logout = await ViewsService.logoutUser(_id);
             res.clearCookie(tokenCookie);
             res.redirect("/");
         });
@@ -97,8 +99,17 @@ class ViewsController{
 
     static profileUser = async (req, res) =>{
         try {
-            const { first_name, last_name, email, age, rol, cart } = await ViewsService.profileUser(req.user._id);
-            res.render("profile", { first_name, last_name, email, age, rol, cart } );
+            const { result } = req.query;
+            let mensajeResultado = "";
+            if (result) {
+                if (result == "OK99") {
+                    mensajeResultado = "Operación exitosa";
+                } else {
+                    mensajeResultado = MError[result];
+                }
+            }
+            const { _id, first_name, last_name, email, age, rol, cart, avatar } = await ViewsService.profileUser(req.user._id);
+            res.render("profile", { _id, first_name, last_name, email, age, rol, cart, avatar, mensajeResultado } );
         } catch (e) {
             return e;
         }

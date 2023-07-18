@@ -7,6 +7,8 @@ import { config } from "./config/config.js";
 const tokenSecret = config.token.secret;
 import jwt from "jsonwebtoken";
 
+import multer from "multer";
+
 // Debemos crear nuestra propia variable __dirname a través de este método si usamos ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,5 +70,38 @@ export const verifyEmailToken = (token)=>{
       return null;
   }
 };
+
+
+const profileStorage = multer.diskStorage({
+  destination: function(req,file,cb){
+      cb(null,path.join(__dirname,"/files/users/images"))
+  },
+  filename: function(req,file,cb){
+      cb(null,`${req.params.uid}-profile-${file.originalname}`)
+  }
+});
+export const uploaderProfile = multer({storage:profileStorage});
+
+
+const documentStorage = multer.diskStorage({
+  destination: function(req,file,cb){
+      cb(null,path.join(__dirname,"/files/users/documents"))
+  },
+  filename: function(req,file,cb){
+      cb(null,`${req.params.uid}-documents-${file.originalname}`)
+  }
+});
+export const uploaderDocument = multer({storage:documentStorage});
+
+
+const productStorage = multer.diskStorage({
+  destination: function(req,file,cb){
+      cb(null,path.join(__dirname,"/files/products/images"))
+  },
+  filename: function(req,file,cb){
+      cb(null,`${req.body.code}-image-${file.originalname}`)
+  }
+});
+export const uploaderProduct = multer({storage:productStorage});
 
 export default __dirname;

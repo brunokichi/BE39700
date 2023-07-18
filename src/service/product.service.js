@@ -13,8 +13,8 @@ class ProductService{
         return product;
     }
 
-    static addProduct = (title, description, code, price, status, stock, category, thumbnail, owner)=>{
-        const newProduct =  manager.addProduct(title, description, code, price, status, stock, category, thumbnail, owner);
+    static addProduct = (title, description, code, price, status, stock, category, thumbnail, image, owner)=>{
+        const newProduct =  manager.addProduct(title, description, code, price, status, stock, category, thumbnail, image, owner);
         return newProduct;
     }
 

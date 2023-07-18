@@ -27,6 +27,18 @@ class UsersController{
             }
         }
     };
+
+    static uploadAvatar = async (req,res)=>{
+        const userId = req.params.uid;
+        const uploadAvatar = await UserService.uploadAvatar(userId, req.file.filename);
+        res.redirect('/profile?result=' + uploadAvatar);
+    };
+
+    static uploadDoc = async (req,res)=>{
+        const userId = req.params.uid;
+        const uploadDoc = await UserService.uploadDoc(userId, req.files);
+        res.redirect('/profile?result=' + uploadDoc);
+    };
 }
 
 export { UsersController }

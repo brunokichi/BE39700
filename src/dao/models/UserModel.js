@@ -33,6 +33,33 @@ const usersSchema = new mongoose.Schema({
     enum:["Usuario","Admin","Premium"],
     default:"Usuario",
   },
+  documents: {
+    type: [{
+        name: {
+          type:String, 
+          required:true
+        },
+        reference: {
+          type:String, 
+          required:true
+        }
+      }],
+    default:[],
+  },
+  last_connection:{
+    type: Date,
+    default: null
+  },
+  status:{
+    type:String,
+    required:true,
+    enums:["Completo","Incompleto","Pendiente"],
+    default:"Pendiente"
+  },
+  avatar:{
+    type: String,
+    default: ""
+  }
 });
 
 const userModel = mongoose.model("users", usersSchema);

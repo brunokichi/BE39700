@@ -24,9 +24,13 @@ class ProductController{
 
     static addProduct = async (req,res)=>{
         const { title, description, code, price, status, stock, category, thumbnail } = req.body;
+        let image = "";
+        if (req.file) {
+            image = req.file.filename;
+        } 
         const owner = req.user._id;
         try {
-            const newProduct = await ProductService.addProduct(title, description, code, +price, status, +stock, category, thumbnail, owner);
+            const newProduct = await ProductService.addProduct(title, description, code, +price, status, +stock, category, thumbnail, image, owner);
             try {
                 const products = await ProductService.getProducts();
                 req.socketServer.emit("products", products.docs);

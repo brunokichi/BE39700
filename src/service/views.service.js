@@ -10,6 +10,11 @@ class ViewsService{
         return resProfileUser;
     };
 
+    static logoutUser = async (id)=> {
+        const resLogoutUser =  await managerSessions.logoutUser(id);
+        return resLogoutUser;
+    };
+
     static getProducts = async (limit, page, sort, title, stock)=> {
         const resProducts =  await managerProducts.getProducts(limit, page, sort, title, stock);
         return resProducts;

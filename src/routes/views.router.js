@@ -13,7 +13,7 @@ router.get("/carts/:cid", ViewsController.cartsId);
 router.get("/chat", SessionController.loginController, SessionController.checkRol(["Usuario"]), ViewsController.chat);
 router.get("/current", SessionController.loginController, ViewsController.profileUser);
 router.get("/login", ViewsController.login);
-router.get("/logout", ViewsController.logout);
+router.get("/logout", SessionController.loginController, ViewsController.logout);
 router.get("/register", ViewsController.register);
 router.get("/forgotpassword", ViewsController.forgotpassword);
 router.get("/resetpassword", ViewsController.resetpassword);
