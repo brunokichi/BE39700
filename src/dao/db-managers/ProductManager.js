@@ -6,7 +6,10 @@ import { EError, MError } from "../../service/errors/enums.js";
 import { generateErrorDB } from "../../service/errors/errorDatabase.js";
 import { generateErrorProduct } from "../../service/errors/errorProduct.js";
 
+import { sendDeleteProduct } from "../../utils/email.js";
+
 import { addLogger } from "../../utils/logger.js";
+import userModel from "../models/UserModel.js";
 const logger = addLogger();
 export default class ProductManager {
 
@@ -187,6 +190,10 @@ export default class ProductManager {
         if (userRol === "Admin" || ( userRol === "Premium" && userId == product.owner )) {
           try {
             const result = await productModel.deleteOne({ _id: productId });
+            const userOwner = await userModel.findById(product.owner);
+            if (userOwner.rol === "Premium") {
+              const send = await sendDeleteProduct(userOwner.email, userOwner.first_name, userOwner.last_name, productId);
+            }
             return `Producto ID ${productId} eliminado`;
           } catch (error) {
             CustomError.createError({

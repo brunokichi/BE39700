@@ -248,7 +248,6 @@ export default class SessionManager {
   resetPassword = async (token, user, password) => {
     try {
       const validToken = verifyEmailToken(token);
-      console.log(validToken);
       if(!validToken){
         CustomError.createError({
           name:"Token vencido / invalido",
@@ -273,7 +272,6 @@ export default class SessionManager {
 
       try {
         const findUser = await userModel.findOne({ email: user });
-        console.log(findUser);
         if(!findUser){
             CustomError.createError({
               name:"Error en validacion de usuario",

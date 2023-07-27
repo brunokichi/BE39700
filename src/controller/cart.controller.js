@@ -31,10 +31,15 @@ class CartController{
 
     static addProductToCart = async (req,res)=>{
         try {
+            const { section } = req.body;
             const userId = JSON.parse(JSON.stringify(req.user._id));
             const product = await CartService.addProductToCart(req.params.cid, req.params.pid, userId);
             //res.send(product);
-            res.redirect('/products?result=' + product);
+            if (section) {
+                res.redirect('/cart?result=' + product);
+            } else {
+                res.redirect('/products?result=' + product);
+            }
         } catch (e) {
             return e;
         }
@@ -51,10 +56,14 @@ class CartController{
     };
 
     static updProductFromCart = async (req,res)=>{
-        const { quantity } = req.body;
+        const { quantity, section } = req.body;
         try {
             const cart = await CartService.updProductFromCart(req.params.cid, req.params.pid, quantity);
-            res.json(cart);
+            if (section) {
+                res.redirect('/cart?result=' + cart);
+            } else {
+                res.json(cart);
+            }
         } catch (e) {
             return e;
         }
@@ -62,8 +71,13 @@ class CartController{
 
     static deleteProductFromCart = async (req,res)=>{
         try {
+            const { section } = req.body;
             const delProduct = await CartService.deleteProductFromCart(req.params.cid, req.params.pid);
-            res.json(delProduct);
+            if (section) {
+                res.redirect('/cart?result=' + delProduct);
+            } else {
+                res.json(delProduct);
+            }
         } catch (e) {
             return "Se produjo un error al eliminar el producto del carrito";
         }
@@ -71,8 +85,13 @@ class CartController{
 
     static emptyCart = async (req,res)=>{
         try {
+            const { section } = req.body;
             const delProducts = await CartService.emptyCart(req.params.cid);
-            res.json(delProducts);
+            if (section) {
+                res.redirect('/cart?result=' + delProducts);
+            } else {
+                res.json(delProducts);
+            }
         } catch (e) {
             return "Se produjo un error al vaciar el carrito";
         }
@@ -81,8 +100,11 @@ class CartController{
     static purchase = async (req,res)=>{
         try {
             const newPurchase = await CartService.purchase(req.params.cid, req.user);
-            //return newPurchase;
-            res.send(newPurchase);
+            if (newPurchase.length === 4){
+                res.redirect('/purchase?result=' + newPurchase);
+            } else {
+                res.redirect('/purchase?tid=' + newPurchase);
+            }
         } catch (e) {
             return e;
         }

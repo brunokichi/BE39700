@@ -1,0 +1,40 @@
+<div>
+  <div>
+    Bienvenido {{ email }}
+    <a href="/profile"><button type="button" id="profile" style="margin-left:1%"> Mi perfil </button></a>
+    <a href="/logout"><button type="button" id="logout" style="margin-left:1%"> Cerrar sesión </button></a>
+  </div>
+  <h2>Resultados de la compra</h2>
+  <h3 style="color: red"> {{mensajeResultado}} </h3>
+  
+  {{#if ticketProducts }}
+    <h2>Productos adquiridos</h2>
+      {{#each ticketProducts}}
+        <p>
+            ID: {{product._id}} / Título: {{product.title}} <br />
+            Precio unitario: $ {{product.price}} / Cantidad: {{quantity}}<br /><br />
+            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        </p>
+      {{/each}}
+    <p>
+      Costo total: $ {{amount}}
+    </p>
+  {{/if}}
+  
+  {{#if cartProducts }}
+    <h2>Productos faltantes</h2>
+    {{#each cartProducts}}
+      <p>
+          ID: {{product._id}} / Título: {{product.title}} <br />
+          Descripción: {{product.description}} / Precio: $ {{product.price}} <br />
+          Miniaturas: {{product.thumbnail}} / Código: {{product.code}} <br />
+          Categoria: {{product.category}} <br />
+          Cantidad solicitada: {{quantity}} / {{product.stock}} disponibles <br />
+          </br>
+          - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      </p>
+    {{/each}}
+  {{/if}}
+  </br>
+  <a href="/"><button type="button" style="margin-top:1%"> Volver al listado de productos </button></a> 
+</div>

@@ -8,6 +8,21 @@ class UserService{
         return updRol;
     }
 
+    static deleteUserById = (userId)=>{
+        const deleteUserById =  manager.deleteUserById(userId);
+        return deleteUserById;
+    }
+
+    static deleteUsersIdle = ()=>{
+        const deleteUsersIdle =  manager.deleteUsersIdle();
+        return deleteUsersIdle;
+    }
+
+    static getUsers = async ()=> {
+        const resUsers =  await manager.getUsers();
+        return resUsers;
+    };
+
     static uploadAvatar = (userId, fileName)=>{
         const uploadAvatar =  manager.uploadAvatar(userId, fileName);
         return uploadAvatar;

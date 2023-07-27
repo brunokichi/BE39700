@@ -1,0 +1,38 @@
+<div>
+  <div>
+    Bienvenido {{ email }}
+    <a href="/profile"><button type="button" id="profile" style="margin-left:1%"> Mi perfil </button></a>
+    <a href="/logout"><button type="button" id="logout" style="margin-left:1%"> Cerrar sesión </button></a>
+  </div>
+  <h3 style="color: red"> {{mensajeResultado}} </h3>
+  <h2>Lista de productos correspondientes al carrito ID {{cart}}</h2>
+  <form action="/api/carts/{{cart}}/purchase" method="post" style="display: inline-block;">
+      <input type="submit" value="Realizar compra"/>
+  </form>
+  <form action="/api/carts/empty/{{cart}}" method="post" style="display: inline-block; margin-left:5%;">
+      <input type="hidden" id="section" name="section" value="cart"/>
+      <input type="submit" value="Vaciar carrito"/>
+  </form>
+  {{#each products}}
+    <p>
+        ID: {{product._id}} / Título: {{product.title}} <br />
+        Descripción: {{product.description}} / Precio: $ {{product.price}} <br />
+        Miniaturas: {{product.thumbnail}} / Código: {{product.code}} <br />
+        Categoria: {{product.category}} <br />
+        Cantidad solicitada: {{quantity}} / {{product.stock}} disponibles <br />
+        <form action="/api/carts/{{../cart}}/product/{{product._id}}/upd" method="post" style="display: inline-block;">
+          <input type="hidden" id="section" name="section" value="cart"/>
+          <input type="number" id="quantity" name="quantity" min="1" value="1" style="width: 40px;"/>
+          <input type="submit" value="Modificar cantidad"/>
+        </form>
+        <form action="/api/carts/{{../cart}}/delete/{{product._id}}" method="post" style="display: inline-block; margin-left:1%;">
+          <input type="hidden" id="section" name="section" value="cart"/>
+          <input type="submit" value="Eliminar del carrito"/>
+        </form>
+        </br>
+        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    </p>
+  {{/each}}
+  </br>
+  <a href="/"><button type="button" style="margin-top:1%"> Volver atrás </button></a> 
+</div>

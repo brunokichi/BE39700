@@ -1,8 +1,10 @@
-import { ProductManager, CartManager, SessionManager } from "../dao/index.js"
+import { ProductManager, CartManager, SessionManager, UserManager, TicketManager } from "../dao/index.js"
 
 const managerCarts = new CartManager();
 const managerProducts = new ProductManager();
 const managerSessions = new SessionManager();
+const managerUsers = new UserManager();
+const managerTickets = new TicketManager();
 
 class ViewsService{
     static profileUser = async (id)=> {
@@ -20,9 +22,19 @@ class ViewsService{
         return resProducts;
     };
 
+    static adminUsers = async ()=> {
+        const resUsers =  await managerUsers.getUsers();
+        return resUsers;
+    };
+
     static getCartById = async (cid)=> {
         const cart =  await managerCarts.getCartById(cid);
         return cart;
+    };
+
+    static getTicketById = async (tid)=> {
+        const ticket =  await managerTickets.getTicketById(tid);
+        return ticket;
     };
 
     static mockingproducts = ()=> {

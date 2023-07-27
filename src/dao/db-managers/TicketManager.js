@@ -20,7 +20,7 @@ export default class TicketManager {
     }
     try {
       const newTicket = await ticketModel.create(ticket);
-      return `${newTicket}`;
+      return (newTicket);
     } catch (e) {
         //return "Se produjo un error al generar un nuevo ticket en la db";
         CustomError.createError({
@@ -31,6 +31,26 @@ export default class TicketManager {
         });
         logger.error(`${MError.DB09} - ${new Date().toLocaleTimeString()}`);
         return "Se produjo un error al generar el ticket";
+    }
+  };
+
+  getTicketById = async (idTicket) => {
+    try {
+      const ticket = await ticketModel
+        .findOne({ code: idTicket })
+        .lean()
+        .populate("products.product");;
+      //.populate("products.product");
+      return ticket;
+    } catch (e) {
+      CustomError.createError({
+        name:"DB Error en busqueda de ticket",
+        cause:generateErrorDB(MError.DB11),
+        message: MError.DB11,
+        errorCode: EError.DB_ERROR
+      });
+      logger.erro(`${MError.DB11} - ${new Date().toLocaleTimeString()}`);
+      return "GEN99";
     }
   };
 }

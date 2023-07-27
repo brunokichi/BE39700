@@ -1,0 +1,52 @@
+<div style="text-align:center">
+  <h1>Administracion de usuarios</h1>
+  <div style="margin-top:2%">
+    <table style="margin-left: auto; margin-right: auto">
+      <thead>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px">Apellido</td>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px">Nombre</td>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px">E-mail</td>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px">Rol</td>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px">Estado</td>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px">Última conexión</td>
+          <td style="font-weight: 700; border: 1px solid black; padding: 5px" colspan="2">Acciones</td>
+      </thead>
+      {{#each users}}
+        <tr>
+          <td style="border: 1px solid black; padding: 5px">{{last_name}}</td>
+          <td style="border: 1px solid black; padding: 5px">{{first_name}}</td>
+          <td style="border: 1px solid black; padding: 5px">{{email}}</td>
+          <td style="border: 1px solid black; padding: 5px">{{rol}}</td>
+          <td style="border: 1px solid black; padding: 5px">{{status}}</td>
+          <td style="border: 1px solid black; padding: 5px">{{last_connection}}</td>
+          <td style="border: 1px solid black; padding: 5px">
+            <form method="post" action="/api/users/premium/">
+              <input type="hidden" id="userid" name="userid" value="{{_id}}"/>
+              <button type="submit" style="margin-top:1%"> Modificar rol </button>
+            </form>
+          </td>
+          <td style="border: 1px solid black; padding: 5px">
+            <form method="post" action="/api/users/delete">
+              <input type="hidden" id="userid" name="userid" value="{{_id}}"/>
+              <button type="submit" style="margin-top:1%"> Eliminar usuario </button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+    <p>
+      {{mensajeResultado}}
+    </p>
+    <p>
+      <form method="post" action="/api/users/deleteidle">
+        <input type="hidden" id="userid" name="userid" value="{{_id}}"/>
+        <button type="submit" style="margin-top:1%"> Eliminar usuario inactivos </button>
+      </form>
+    </p>
+    <p> 
+      <a href="/"><button type="button" style="margin-top:1%"> Volver atrás </button></a> 
+    </p>
+    
+  </div>
+  
+</div>

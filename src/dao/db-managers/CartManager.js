@@ -82,23 +82,31 @@ export default class CartManager {
         if (userId == productAvail.owner) {
           CustomError.createError({
             name:"Producto no habilitado para el usuario",
-            cause:generateErrorSys(MError.US04),
+            cause:generateErrorSys(MError.AUTH05),
             message: MError.AUTH05,
             errorCode: EError.AUTH_ERROR
           });
           logger.debug(`${MError.AUTH05} - ${new Date().toLocaleTimeString()}`);
           return "AUTH05";
+        } else if (productAvail.stock === 0) {
+            // Stock insuficiente
+            return "PR05";
         } else {
           const product = cart.products.filter((el) => el.product.id == pid);
           if (product.length > 0) {
             const productIndex = cart.products.findIndex((el) => el.product.id == pid);
-            cart.products[productIndex].quantity++;
-            cart.save();
-            return "OK99";
+            if (cart.products[productIndex].quantity < productAvail.stock) {
+                cart.products[productIndex].quantity++;
+                cart.save();
+                return "OK99";
+            } else {
+                // Stock insuficiente
+                return "PR05";
+            }
           } else {
-            cart.products.push({ product: pid, quantity: 1 });
-            cart.save();
-            return "OK99";
+              cart.products.push({ product: pid, quantity: 1 });
+              cart.save();
+              return "OK99";
           }
         }
       } catch (e) {
@@ -145,14 +153,28 @@ export default class CartManager {
   updProductFromCart = async (cid, pid, quantity) => {
     try {
       const cart = await cartModel.findById(cid);
-
       const product = cart.products.filter((el) => el.product._id == pid);
-
       if (product.length > 0) {
-        const productIndex = cart.products.findIndex((el) => el.product._id == pid);
-        cart.products[productIndex].quantity = quantity;
-        cart.save();
-        return "OK99";
+        try {
+          const productStock = await productModel.findById(pid);
+          if (quantity < productStock.stock) {
+            const productIndex = cart.products.findIndex((el) => el.product._id == pid);
+            cart.products[productIndex].quantity = quantity;
+            cart.save();
+            return "OK99";
+          } else {
+            return "PR05";
+          }
+        } catch (e) {
+          CustomError.createError({
+            name:"Error! ID producto inexistente",
+            cause:generateErrorProduct('simple', MError.PR04, '', '', '' , '', '', '', pid),
+            message: MError.PR04,
+            errorCode: EError.PRODUCT_ERROR
+          });
+          logger.info(`${MError.PR04} - ${pid} -  ${new Date().toLocaleTimeString()}`);
+          return "PR04";
+        }
       } else {
         //return "Producto no encontrado en el carrito";
         CustomError.createError({
@@ -185,7 +207,8 @@ export default class CartManager {
         const productIndex = cart.products.findIndex((el) => el.product._id == pid);
         cart.products.splice(productIndex, 1);
         cart.save();
-        return `Producto ID ${pid} eliminado del carrito`;
+        //return `Producto ID ${pid} eliminado del carrito`;
+        return "OK98";
       } else {
         //return `Producto ID ${pid} no encontrado en el carrito`;
         CustomError.createError({
@@ -195,7 +218,7 @@ export default class CartManager {
           errorCode: EError.PRODUCT_ERROR
         });
         logger.info(`${MError.PR04} - ${new Date().toLocaleTimeString()}`);
-        return "Error! ID producto inexistente";
+        return "PR04";
       }
     } catch (e) {
       //return "Carrito no encontrado";
@@ -206,14 +229,14 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar el/los carritos";
+      return "DB07";
     }
   };
 
   emptyCart = async (cid) => {
     try {
       const result = await cartModel.updateOne({ _id: cid}, { products: []});
-      return "Carrito vaciado exitosamente";
+      return "OK97";
     } catch (e) {
       //return "Carrito no encontrado";
       CustomError.createError({
@@ -223,12 +246,11 @@ export default class CartManager {
         errorCode: EError.DB_ERROR
       });
       logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-      return "Se produjo un error al buscar el/los carritos";
+      return "DB07";
     }
   };
 
   purchase = async (cid, user) => {
-    
     try {
       const cart = await cartModel.findById(cid);
       let amount = 0;
@@ -255,13 +277,16 @@ export default class CartManager {
                   const send = await sendTicket(ticketProducts, amount, user.email);
                   try {
                       const newCart = await this.putProductsToCart(cid, rejectProducts);
-                      return `<b>Ticket generado de la siguiente manera</b> <br/>
-                                ${ticket} <br/>
-                                <b>Carrito actualizado a</b><br/>
-                                ${rejectProducts}
-                        `;
+                      return(ticket.code);
                   } catch (e) {
-                      return "No se pudo actualizar el carrito";
+                      CustomError.createError({
+                        name:"No se pudo actualizar el carrito",
+                        cause:generateErrorDB(MError.DB10),
+                        message: MError.DB10,
+                        errorCode: EError.DB_ERROR
+                      });
+                      logger.error(`${MError.DB10} - ${new Date().toLocaleTimeString()}`);
+                      return "GEN99";
                   }
             } catch (e) {
               //return "No se pudo generar el ticket";
@@ -272,17 +297,17 @@ export default class CartManager {
                 errorCode: EError.DB_ERROR
               });
               logger.error(`${MError.DB09} - ${new Date().toLocaleTimeString()}`);
-              return "Se produjo un error al generar el ticket en CartManager";
+              return "GEN99";
             }
           } else {
             logger.info(`Cart ID ${cid} - Sin stock suficiente para realizar la operación - ${new Date().toLocaleTimeString()}`);
-            return "No hay stock suficiente para realizar la operación";
+            return "CA03";
           }
         } else {
-          res.send("Carrito vacío");
+          return "CA01";
         }
       } else {
-        res.send("Carrito inexistente");
+        return "CA02";
       }
     } catch (e) {
         //res.send("Se produjo un error al buscar el carrito");
@@ -293,7 +318,7 @@ export default class CartManager {
           errorCode: EError.DB_ERROR
         });
         logger.error(`${MError.DB07} - ${new Date().toLocaleTimeString()}`);
-        return "Se produjo un error al buscar el/los carritos";
+        return "DB07";
     }
   };
 }

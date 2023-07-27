@@ -55,3 +55,37 @@ export const sendTicket = async (ticketProducts, amount, email) => {
         `
     })
 }
+
+export const sendDeleteUser = async (email, first_name, last_name) => {
+    await transporter.sendMail({
+        from: config.email.email_admin,
+        to: email,
+        subject: "Usuario eliminado del sistema",
+        html:`
+            <div>
+                <h1>Estimado ${first_name} ${last_name}</h1>
+                <p>
+                    Su usuario ha sido eliminado de nuestro sistema. 
+                    Ante cualquier duda pongase en contacto con nosotros
+                </p>
+            </div>
+        `
+    })
+}
+
+export const sendDeleteProduct = async (email, first_name, last_name, product_id) => {
+    await transporter.sendMail({
+        from: config.email.email_admin,
+        to: email,
+        subject: "Producto eliminado del sistema",
+        html:`
+            <div>
+                <h1>Estimado ${first_name} ${last_name}</h1>
+                <p>
+                    El producto cuyo ID es ${product_id}  ha sido eliminado de nuestro sistema. 
+                    Ante cualquier duda pongase en contacto con nosotros
+                </p>
+            </div>
+        `
+    })
+}

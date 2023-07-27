@@ -41,7 +41,6 @@ class SessionController{
         const { first_name, last_name, email, age, password } = req.body;
         try {
             const resUser = await SessionService.addUser(first_name, last_name, email, age, password);
-            console.log(resUser);
             if (resUser =='OK99') {
                 const resCart = await CartController.addCart();
                 const resUserCart = await SessionService.addUserCart(email,resCart);
